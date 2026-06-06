@@ -1,0 +1,17 @@
+plugins {
+    id 'org.sonarqube' version '7.3.0.8198'
+}
+
+sonar {
+    properties {
+        property 'sonar.projectKey', 'thock-backend'
+        property 'sonar.projectName', 'thock-backend'
+        property 'sonar.host.url', 'http://localhost:9000'
+        property 'sonar.sourceEncoding', 'UTF-8'
+        property 'sonar.gradle.scanAll', 'true'
+        // Sonar Scanner가 분석용 JRE를 자동으로 받는 것을 방지
+        // 이 과정에서 SonarCloud 쪽 API로 붙으려 하거나, 환경에 따라 꼬일 수 있음
+        property 'sonar.scanner.skipJreProvisioning', 'true'
+        property 'sonar.exclusions', '**/build/**,**/generated/**'
+    }
+}
