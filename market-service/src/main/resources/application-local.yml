@@ -8,7 +8,7 @@ spring:
     username: root
 
   flyway:
-    enabled: true
+    enabled: false
     locations: classpath:db/migration
     validate-on-migrate: true
     clean-disabled: false       # 개발 중엔 DB를 밀어야 할 수도 있으니 허용
