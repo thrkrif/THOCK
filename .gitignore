@@ -50,6 +50,7 @@ logs/
 .env
 .env.*
 *.env
+!.env.example
 *.mv.db
 *.trace.db
 .DS_store
@@ -60,3 +61,5 @@ AWS EC2/deploy-kubernetes/base/secrets.yaml
 AWS EC2/deploy-kubernetes/ingress/ip-whitelist-middleware.yaml
 AWS EC2/deploy-docker-compose/nginx/ssl/*.key
 AWS EC2/deploy-docker-compose/nginx/ssl/*.crt
+
+beadv4-4-Refactoring-FE-Deploy/
