@@ -40,6 +40,15 @@ out/
 logs/
 *.log
 
+# Kubernetes / k3s 관련 런타임 데이터 제외 / 쿠버네티스 접근 인증 정보 파일 제외
+k3s/
+*.kubeconfig
+
+# k6 부하 테스트 결과 리포트 제외
+k6/reports/
+k6/*.html
+k6/*.json
+
 ### Temporary Files ###
 *.tmp
 *.bak

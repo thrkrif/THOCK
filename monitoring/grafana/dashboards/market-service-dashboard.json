@@ -624,7 +624,7 @@
           "refId": "A"
         }
       ],
-      "title": "N+1 의심 요청 수",
+      "title": "반복 SELECT 기반 N+1 의심 요청 수",
       "type": "stat"
     },
     {
@@ -956,11 +956,16 @@
       "targets": [
         {
           "expr": "topk(10, sum(rate(market_http_db_select_queries_sum{job=\"market-service\",uri=~\"/api/.*\"}[$__rate_interval])) by (uri) / clamp_min(sum(rate(market_http_db_select_queries_count{job=\"market-service\",uri=~\"/api/.*\"}[$__rate_interval])) by (uri), 0.001))",
-          "legendFormat": "{{uri}}",
+          "legendFormat": "{{uri}} avg select/request",
           "refId": "A"
+        },
+        {
+          "expr": "topk(10, sum(rate(market_http_db_repeated_select_max_sum{job=\"market-service\",uri=~\"/api/.*\"}[$__rate_interval])) by (uri) / clamp_min(sum(rate(market_http_db_repeated_select_max_count{job=\"market-service\",uri=~\"/api/.*\"}[$__rate_interval])) by (uri), 0.001))",
+          "legendFormat": "{{uri}} max repeated select/request",
+          "refId": "B"
         }
       ],
-      "title": "Top API SELECT / Request",
+      "title": "Top API SELECT / Repeated SELECT",
       "type": "timeseries"
     },
     {
