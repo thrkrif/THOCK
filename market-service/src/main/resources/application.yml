@@ -11,6 +11,11 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: ${HIBERNATE_DEFAULT_BATCH_FETCH_SIZE:100}
+
   cloud:
     openfeign:
       circuitbreaker:
