@@ -12,11 +12,18 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "member_refresh_tokens",
+@Table(
+        name = "member_refresh_tokens",
         indexes = {
-                @Index(name = "idx_refresh_member_id", columnList = "member_id"),
-                @Index(name = "idx_refresh_token_hash", columnList = "token_hash", unique = true)
-        })
+                @Index(name = "idx_refresh_member_id", columnList = "member_id")
+        },
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_refresh_token_hash",
+                        columnNames = "token_hash"
+                )
+        }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshToken {
@@ -28,7 +35,7 @@ public class RefreshToken {
     @Column(name = "member_id", nullable = false)
     private Long memberId;
 
-    @Column(name = "token_hash", nullable = false, length = 64, unique = true)
+    @Column(name = "token_hash", nullable = false, length = 64)
     private String tokenHash; // SHA-256 해시 (64자)
 
     @Column(name = "expires_at", nullable = false)
