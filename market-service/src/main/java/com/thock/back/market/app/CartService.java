@@ -94,10 +94,9 @@ public class CartService {
      * 장바구니에 상품 추가
      * @param memberId 회원 ID
      * @param request 상품 추가 요청 (productId, quantity)
-     * @return 추가된 상품 정보
      */
     @Transactional
-    public CartItemResponse addCartItem(Long memberId, CartItemAddRequest request) {
+    public void addCartItem(Long memberId, CartItemAddRequest request) {
 
         MarketMember member = marketSupport.findMemberById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CART_USER_NOT_FOUND));
@@ -120,10 +119,7 @@ public class CartService {
              throw new CustomException(ErrorCode.CART_PRODUCT_OUT_OF_STOCK);
         }
 
-        CartItem addedCartItem = cart.addItem(request.productId(), request.quantity());
-
-
-        return CartItemResponse.from(addedCartItem, product);
+        cart.addItem(request.productId(), request.quantity());
     }
 
     @Transactional
