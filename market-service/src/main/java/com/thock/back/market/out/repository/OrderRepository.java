@@ -3,6 +3,8 @@ package com.thock.back.market.out.repository;
 import com.thock.back.market.domain.Order;
 import com.thock.back.market.domain.OrderState;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,7 +12,17 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByOrderNumber(String orderName);
+
     List<Order> findByBuyerIdOrderByCreatedAtDesc(Long buyerId);
+
+    @Query("""
+            select distinct o
+            from Order o
+            left join fetch o.items
+            where o.buyer.id = :buyerId
+            order by o.createdAt desc
+            """)
+    List<Order> findByBuyerIdWithItemsOrderByCreatedAtDesc(@Param("buyerId") Long buyerId);
 
     // 타임아웃 스케줄러용: 결제 요청 후 N분 경과한 미결제 주문 조회
     List<Order> findByStateAndRequestPaymentDateBefore(OrderState state, LocalDateTime before);
