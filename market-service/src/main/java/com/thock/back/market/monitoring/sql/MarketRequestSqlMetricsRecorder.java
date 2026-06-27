@@ -18,8 +18,8 @@ public class MarketRequestSqlMetricsRecorder {
 
     private final MeterRegistry meterRegistry;
 
-    @Value("${market.metrics.n-plus-one-select-threshold:15}")
-    private int nPlusOneSelectThreshold;
+    @Value("${market.metrics.n-plus-one-repeated-select-threshold:10}")
+    private int nPlusOneRepeatedSelectThreshold;
 
     public void record(MarketRequestSqlMetricsContext.Snapshot snapshot, int status) {
         if (snapshot == null) {
@@ -48,6 +48,14 @@ public class MarketRequestSqlMetricsRecorder {
                 .register(meterRegistry)
                 .record(snapshot.selectQueries());
 
+        DistributionSummary.builder("market_http_db_repeated_select_max")
+                .description("Maximum executions of the same normalized SELECT statement per HTTP request")
+                .baseUnit("queries")
+                .serviceLevelObjectives(1, 2, 3, 5, 10, 20, 50, 100, 200)
+                .tags(tags)
+                .register(meterRegistry)
+                .record(snapshot.maxRepeatedSelectQueries());
+
         Timer.builder("market_http_db_time")
                 .description("Total DB execution time per HTTP request")
                 .tags(tags)
@@ -65,9 +73,9 @@ public class MarketRequestSqlMetricsRecorder {
                 .register(meterRegistry)
                 .record(snapshot.totalQueryTimeMs(), TimeUnit.MILLISECONDS);
 
-        if (snapshot.selectQueries() >= nPlusOneSelectThreshold) {
+        if (snapshot.maxRepeatedSelectQueries() >= nPlusOneRepeatedSelectThreshold) {
             Counter.builder("market_http_db_n_plus_one_suspected_total")
-                    .description("Requests suspected of N+1 due to high SELECT count")
+                    .description("Requests suspected of N+1 due to repeated execution of the same normalized SELECT statement")
                     .tags(tags)
                     .register(meterRegistry)
                     .increment();

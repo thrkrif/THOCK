@@ -48,7 +48,8 @@ public class MarketRequestSqlMetricsFilter extends OncePerRequestFilter {
                                 snapshot.insertQueries(),
                                 snapshot.updateQueries(),
                                 snapshot.deleteQueries(),
-                                snapshot.totalQueryTimeMs()
+                                snapshot.totalQueryTimeMs(),
+                                snapshot.maxRepeatedSelectQueries()
                         ),
                         response.getStatus()
                 );

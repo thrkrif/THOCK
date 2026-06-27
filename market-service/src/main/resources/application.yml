@@ -72,7 +72,7 @@ market:
     enabled: true
     collect-interval-ms: 10000
     consumer-group-id: market-service
-    n-plus-one-select-threshold: 15
+    n-plus-one-repeated-select-threshold: 10
 
 # JWT 설정
 jwt:

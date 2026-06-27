@@ -5,7 +5,6 @@ import com.thock.back.shared.member.dto.MemberDto;
 import com.thock.back.market.in.dto.req.CartItemAddRequest;
 import com.thock.back.market.in.dto.req.OrderCreateRequest;
 import com.thock.back.market.in.dto.res.CartItemListResponse;
-import com.thock.back.market.in.dto.res.CartItemResponse;
 import com.thock.back.market.in.dto.res.OrderCreateResponse;
 import com.thock.back.market.in.dto.res.OrderDetailResponse;
 import com.thock.back.shared.market.domain.CancelReasonType;
@@ -48,8 +47,8 @@ public class MarketFacade {
     }
 
     @Transactional
-    public CartItemResponse addCartItem(Long memberId, CartItemAddRequest request){
-        return cartService.addCartItem(memberId, request);
+    public void addCartItem(Long memberId, CartItemAddRequest request){
+        cartService.addCartItem(memberId, request);
     }
 
     // 주문 생성 로직 (트랜잭션 분리: 멱등성 키 충돌(DataIntegrityViolationException) 시

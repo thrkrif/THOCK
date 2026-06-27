@@ -24,7 +24,7 @@ public class OrderService {
      */
     @Transactional(readOnly = true)
     public List<OrderDetailResponse> getMyOrders(Long memberId) {
-        List<Order> orders = orderRepository.findByBuyerIdOrderByCreatedAtDesc(memberId);
+        List<Order> orders = orderRepository.findByBuyerIdWithItemsOrderByCreatedAtDesc(memberId);
 
         return orders.stream()
                 .map(OrderDetailResponse::from)

@@ -52,27 +52,26 @@ public class ApiV1CartController {
 
     @Operation(
             summary = "장바구니 상품 추가",
-            description = "장바구니에 상품을 추가합니다. 상품 ID와 수량을 입력받아 장바구니에 추가한 후, " +
-                    "추가된 상품의 상세 정보를 반환합니다."
+            description = "상품 ID와 수량을 입력받아 장바구니에 상품을 추가합니다. " +
+                    "추가된 장바구니 상세 정보는 장바구니 조회 API에서 확인합니다."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "장바구니 상품 추가 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CartItemResponse.class))),
+            @ApiResponse(responseCode = "201", description = "장바구니 상품 추가 성공", content = @Content),
             @ApiResponse(responseCode = "400", description = "잘못된 요청 (유효성 검증 실패)", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "사용자 또는 장바구니를 찾을 수 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "서버 내부 오류 (상품 정보 조회 실패 등)", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     /**
-     * 엔드포인트에 {productId} 추가하고 PathVariable로 받아도 된다.
      * 추후 상품의 옵션이 있는 경우도 고려하여 request에 함께 넣어서 보냄
      */
     @PostMapping("/items")
-    public ResponseEntity<CartItemResponse> addCartItem(
+    public ResponseEntity<Void> addCartItem(
             @AuthUser AuthenticatedUser user,
             @Valid @RequestBody CartItemAddRequest request) {
         Long memberId = user.memberId();
         log.info("Market Cart API : addCartItem / memberId = {}", memberId);
-        CartItemResponse response = marketFacade.addCartItem(memberId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        marketFacade.addCartItem(memberId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
