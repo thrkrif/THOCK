@@ -20,6 +20,10 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
+app:
+  sql-metrics:
+    enabled: true
+
 # JWT 설정
 jwt:
   secret: ${JWT_SECRET_KEY}

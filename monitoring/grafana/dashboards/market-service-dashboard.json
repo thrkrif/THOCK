@@ -720,14 +720,16 @@
           "refId": "A"
         }
       ],
-      "title": "Avg DB Time / Request",
+      "description": "Average total DB execution time per HTTP request. Unit: milliseconds. Calculated from market_http_db_time_seconds_sum / count * 1000.",
+      "title": "Avg DB Time / Request (ms)",
       "type": "stat"
     },
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "unit": "short"
+          "unit": "ms",
+          "decimals": 2
         },
         "overrides": []
       },
@@ -759,7 +761,8 @@
           "refId": "A"
         }
       ],
-      "title": "External API Latency P95",
+      "description": "P95 latency of outbound Feign calls from market-service. Unit: milliseconds. Labels split by external client and operation.",
+      "title": "External API Latency P95 (ms)",
       "type": "timeseries"
     },
     {
@@ -804,11 +807,27 @@
       "targets": [
         {
           "expr": "sum(rate(http_server_requests_seconds_count{job=\"market-service\",uri=~\"/api/.*\"}[$__rate_interval]))",
-          "legendFormat": "TPS",
+          "legendFormat": "RPS all",
           "refId": "A"
+        },
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count{job=\"market-service\",uri=~\"/api/.*\",status=~\"2..\"}[$__rate_interval]))",
+          "legendFormat": "TPS success 2xx",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count{job=\"market-service\",uri=~\"/api/.*\",status=~\"4..\"}[$__rate_interval]))",
+          "legendFormat": "RPS 4xx",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count{job=\"market-service\",uri=~\"/api/.*\",status=~\"5..\"}[$__rate_interval]))",
+          "legendFormat": "RPS 5xx",
+          "refId": "D"
         }
       ],
-      "title": "API TPS Trend",
+      "description": "RPS all is every /api/* request per second. TPS success 2xx is successful /api/* requests per second. 4xx/5xx lines show client/server error request rates.",
+      "title": "API RPS / Success TPS Trend",
       "type": "timeseries"
     },
     {
@@ -911,7 +930,8 @@
           "refId": "A"
         }
       ],
-      "title": "Top API SQL / Request",
+      "description": "Top APIs by average number of SQL statements executed per HTTP request. Higher values mean each request performs more SQL work.",
+      "title": "Top API Avg SQL Count / Request",
       "type": "timeseries"
     },
     {
@@ -965,14 +985,16 @@
           "refId": "B"
         }
       ],
-      "title": "Top API SELECT / Repeated SELECT",
+      "description": "Average SELECT count per request and the maximum repeated normalized SELECT count per request. The repeated SELECT series is useful for spotting N+1 patterns.",
+      "title": "Top API Avg SELECT / Max Repeated SELECT",
       "type": "timeseries"
     },
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "unit": "short"
+          "unit": "ms",
+          "decimals": 2
         },
         "overrides": []
       },
@@ -1004,7 +1026,8 @@
           "refId": "A"
         }
       ],
-      "title": "Top API DB Time / Request",
+      "description": "Top APIs by average total DB execution time per HTTP request. Unit: milliseconds.",
+      "title": "Top API Avg DB Time / Request (ms)",
       "type": "timeseries"
     },
     {
