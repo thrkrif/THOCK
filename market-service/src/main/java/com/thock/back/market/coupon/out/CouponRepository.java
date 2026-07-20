@@ -18,4 +18,6 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
     List<Coupon> findByActiveTrueAndStartsAtLessThanEqualAndExpiresAtAfterOrderByExpiresAtAsc(
             LocalDateTime startsAt, LocalDateTime expiresAt);
+
+    List<Coupon> findAllByOrderByCreatedAtDesc();
 }

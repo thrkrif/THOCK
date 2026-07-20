@@ -6,6 +6,7 @@ import com.thock.back.market.coupon.domain.Coupon;
 import com.thock.back.market.coupon.domain.MemberCoupon;
 import com.thock.back.market.coupon.in.dto.CouponCreateRequest;
 import com.thock.back.market.coupon.in.dto.CouponResponse;
+import com.thock.back.market.coupon.in.dto.CouponActiveUpdateRequest;
 import com.thock.back.market.coupon.in.dto.MemberCouponResponse;
 import com.thock.back.market.coupon.out.CouponRepository;
 import com.thock.back.market.coupon.out.MemberCouponRepository;
@@ -36,6 +37,20 @@ public class CouponService {
         LocalDateTime now = LocalDateTime.now();
         return couponRepository.findByActiveTrueAndStartsAtLessThanEqualAndExpiresAtAfterOrderByExpiresAtAsc(now, now)
                 .stream().map(CouponResponse::from).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<CouponResponse> findAllForAdmin() {
+        return couponRepository.findAllByOrderByCreatedAtDesc().stream()
+                .map(CouponResponse::from).toList();
+    }
+
+    @Transactional
+    public CouponResponse updateActive(Long couponId, CouponActiveUpdateRequest request) {
+        Coupon coupon = couponRepository.findByIdForUpdate(couponId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COUPON_NOT_FOUND));
+        coupon.updateActive(request.active());
+        return CouponResponse.from(coupon);
     }
 
     @Transactional

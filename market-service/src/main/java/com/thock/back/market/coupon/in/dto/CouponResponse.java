@@ -8,10 +8,10 @@ import java.time.LocalDateTime;
 public record CouponResponse(Long id, String code, String name, CouponDiscountType discountType,
                              Long discountValue, Long minimumOrderAmount, Long maximumDiscountAmount,
                              Integer totalQuantity, Integer issuedQuantity, LocalDateTime startsAt,
-                             LocalDateTime expiresAt) {
+                             LocalDateTime expiresAt, boolean active) {
     public static CouponResponse from(Coupon coupon) {
         return new CouponResponse(coupon.getId(), coupon.getCode(), coupon.getName(), coupon.getDiscountType(),
                 coupon.getDiscountValue(), coupon.getMinimumOrderAmount(), coupon.getMaximumDiscountAmount(),
-                coupon.getTotalQuantity(), coupon.getIssuedQuantity(), coupon.getStartsAt(), coupon.getExpiresAt());
+                coupon.getTotalQuantity(), coupon.getIssuedQuantity(), coupon.getStartsAt(), coupon.getExpiresAt(), coupon.isActive());
     }
 }

@@ -6,6 +6,7 @@ import com.thock.back.global.security.AuthUser;
 import com.thock.back.global.security.AuthenticatedUser;
 import com.thock.back.market.coupon.app.CouponService;
 import com.thock.back.market.coupon.in.dto.CouponCreateRequest;
+import com.thock.back.market.coupon.in.dto.CouponActiveUpdateRequest;
 import com.thock.back.market.coupon.in.dto.CouponResponse;
 import com.thock.back.market.coupon.in.dto.MemberCouponResponse;
 import com.thock.back.shared.member.domain.MemberRole;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,6 +45,20 @@ public class CouponController {
         return ResponseEntity.ok(couponService.findIssuableCoupons());
     }
 
+    @GetMapping("/admin")
+    public ResponseEntity<List<CouponResponse>> findAllForAdmin(@AuthUser AuthenticatedUser user) {
+        requireAdmin(user);
+        return ResponseEntity.ok(couponService.findAllForAdmin());
+    }
+
+    @PatchMapping("/{couponId}/active")
+    public ResponseEntity<CouponResponse> updateActive(@AuthUser AuthenticatedUser user,
+                                                       @PathVariable Long couponId,
+                                                       @Valid @RequestBody CouponActiveUpdateRequest request) {
+        requireAdmin(user);
+        return ResponseEntity.ok(couponService.updateActive(couponId, request));
+    }
+
     @PostMapping("/{couponId}/issue")
     public ResponseEntity<MemberCouponResponse> issue(@AuthUser AuthenticatedUser user,
                                                       @PathVariable Long couponId) {
@@ -52,5 +68,11 @@ public class CouponController {
     @GetMapping("/me")
     public ResponseEntity<List<MemberCouponResponse>> findMyCoupons(@AuthUser AuthenticatedUser user) {
         return ResponseEntity.ok(couponService.findMyCoupons(user.memberId()));
+    }
+
+    private void requireAdmin(AuthenticatedUser user) {
+        if (user.role() != MemberRole.ADMIN) {
+            throw new CustomException(ErrorCode.COUPON_ADMIN_REQUIRED);
+        }
     }
 }

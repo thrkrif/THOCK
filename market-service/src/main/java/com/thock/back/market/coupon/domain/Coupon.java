@@ -96,6 +96,10 @@ public class Coupon extends BaseIdAndTime {
         return active && !now.isBefore(startsAt) && now.isBefore(expiresAt);
     }
 
+    public void updateActive(boolean active) {
+        this.active = active;
+    }
+
     public long calculateDiscount(long orderAmount) {
         if (orderAmount < minimumOrderAmount) {
             throw new CustomException(ErrorCode.COUPON_NOT_APPLICABLE);
