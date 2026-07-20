@@ -93,7 +93,7 @@ spring:
         - id: market-service
           uri: ${MARKET_SERVICE_URL:http://market-service:8083}
           predicates:
-            - Path=/api/v1/carts/**,/api/v1/orders/**
+            - Path=/api/v1/carts/**,/api/v1/orders/**,/api/v1/coupons/**
           filters:
             - name: GatewayJwt
 
