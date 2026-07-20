@@ -95,6 +95,10 @@ public enum ErrorCode {
     ORDER_WALLET_API_FAILED("WALLET-500-1", "지갑 정보를 불러올 수 없습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // ===== 배송 =====
+    SHIPPING_NOT_FOUND("SHIPPING-404-1", "배송 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    SHIPPING_INVALID_STATUS("SHIPPING-400-1", "배송 상태를 변경할 수 없습니다.", HttpStatus.BAD_REQUEST),
+    SHIPPING_SELLER_FORBIDDEN("SHIPPING-403-1", "해당 상품의 판매자만 배송을 처리할 수 있습니다.", HttpStatus.FORBIDDEN),
+    SHIPPING_ORDER_ITEM_NOT_READY("SHIPPING-400-2", "배송을 시작할 수 없는 주문 상품 상태입니다.", HttpStatus.BAD_REQUEST),
 
     // ===== 결제 =====
     WALLET_NOT_FOUND("WALLET-404-1", "지갑을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
