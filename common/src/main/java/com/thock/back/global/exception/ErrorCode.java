@@ -94,12 +94,6 @@ public enum ErrorCode {
     ORDER_CONCURRENT_MODIFICATION("ORDER-409-2", "주문 처리 중 동시성 충돌이 발생했습니다. 잠시 후 다시 시도해주세요.", HttpStatus.CONFLICT),
     ORDER_WALLET_API_FAILED("WALLET-500-1", "지갑 정보를 불러올 수 없습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
 
-    // ===== 배송 =====
-    SHIPPING_NOT_FOUND("SHIPPING-404-1", "배송 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    SHIPPING_INVALID_STATUS("SHIPPING-400-1", "배송 상태를 변경할 수 없습니다.", HttpStatus.BAD_REQUEST),
-    SHIPPING_SELLER_FORBIDDEN("SHIPPING-403-1", "해당 상품의 판매자만 배송을 처리할 수 있습니다.", HttpStatus.FORBIDDEN),
-    SHIPPING_ORDER_ITEM_NOT_READY("SHIPPING-400-2", "배송을 시작할 수 없는 주문 상품 상태입니다.", HttpStatus.BAD_REQUEST),
-
     // ===== 쿠폰 =====
     COUPON_NOT_FOUND("COUPON-404-1", "쿠폰을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     COUPON_NOT_AVAILABLE("COUPON-400-1", "현재 발급할 수 없는 쿠폰입니다.", HttpStatus.BAD_REQUEST),
