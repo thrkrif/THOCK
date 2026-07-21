@@ -5,6 +5,7 @@ import com.thock.back.global.exception.ErrorCode;
 import com.thock.back.market.domain.Order;
 import com.thock.back.market.domain.OrderCancelHistory;
 import com.thock.back.market.domain.OrderItem;
+import com.thock.back.market.coupon.app.CouponService;
 import com.thock.back.market.out.repository.OrderCancelHistoryRepository;
 import com.thock.back.shared.market.domain.CancelReasonType;
 import com.thock.back.market.out.repository.OrderRepository;
@@ -22,6 +23,7 @@ import java.util.List;
 public class MarketCancelOrderPaymentUseCase {
     private final OrderRepository orderRepository;
     private final OrderCancelHistoryRepository orderCancelHistoryRepository;
+    private final CouponService couponService;
 
     @Transactional
     public void cancelOrder(Long memberId, Long orderId, CancelReasonType cancelReasonType, String cancelReasonDetail){
@@ -32,6 +34,11 @@ public class MarketCancelOrderPaymentUseCase {
             order.cancelRequestPayment(cancelReasonType, cancelReasonDetail);
         } else {
             order.cancel(cancelReasonType, cancelReasonDetail);
+        }
+
+        if (order.getState() == com.thock.back.market.domain.OrderState.CANCELLED
+                && order.getCouponId() != null && couponService != null) {
+            couponService.restore(order.getBuyer().getId(), order.getCouponId(), order.getOrderNumber());
         }
 
         // 4. 취소 히스토리 저장 (각 아이템별로)

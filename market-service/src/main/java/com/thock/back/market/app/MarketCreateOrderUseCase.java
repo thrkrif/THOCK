@@ -3,6 +3,7 @@ package com.thock.back.market.app;
 import com.thock.back.global.exception.CustomException;
 import com.thock.back.global.exception.ErrorCode;
 import com.thock.back.market.domain.*;
+import com.thock.back.market.coupon.app.CouponService;
 import com.thock.back.market.in.dto.req.OrderCreateRequest;
 import com.thock.back.market.in.dto.res.OrderCreateResponse;
 import com.thock.back.market.out.api.dto.ProductInfo;
@@ -28,6 +29,7 @@ public class MarketCreateOrderUseCase {
     private final MarketMemberRepository marketMemberRepository;
     private final CartRepository cartRepository;
     private final MarketSupport marketSupport; // 조회 전용
+    private final CouponService couponService;
 
     // Facade에서 접근해야 하므로 public으로 열고 읽기 전용 트랜잭션 적용
     @Transactional(readOnly = true)
@@ -69,6 +71,12 @@ public class MarketCreateOrderUseCase {
         appendOrderItems(order, selectedCartItems, productMap);
 
         Order savedOrder = orderRepository.saveAndFlush(order);
+
+        if (request.couponId() != null) {
+            long discount = couponService.apply(
+                    buyer.getId(), request.couponId(), savedOrder.getTotalSalePrice(), savedOrder.getOrderNumber());
+            savedOrder.applyCoupon(request.couponId(), discount);
+        }
 
         WalletInfo wallet = marketSupport.getWallet(buyer.getId());
         Long balance = wallet.getBalance();

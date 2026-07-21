@@ -29,6 +29,14 @@ jwt:
   refresh-token-exp-seconds: 1209600
   issuer: "thock"
 
+# 초기 관리자 부트스트랩. 운영 환경변수로만 활성화한다.
+admin:
+  bootstrap:
+    enabled: ${ADMIN_BOOTSTRAP_ENABLED:false}
+    email: ${ADMIN_EMAIL:}
+    name: ${ADMIN_NAME:시스템 관리자}
+    password: ${ADMIN_PASSWORD:}
+
 # Actuator & Prometheus (공통)
 management:
   endpoints:

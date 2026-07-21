@@ -43,4 +43,8 @@ public abstract class BaseMember extends BaseEntity {
         this.role = role;
         this.state = state;
     }
+
+    public void promoteToAdmin() {
+        this.role = MemberRole.ADMIN;
+    }
 }

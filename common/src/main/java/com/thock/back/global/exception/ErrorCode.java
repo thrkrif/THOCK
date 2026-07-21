@@ -94,7 +94,15 @@ public enum ErrorCode {
     ORDER_CONCURRENT_MODIFICATION("ORDER-409-2", "주문 처리 중 동시성 충돌이 발생했습니다. 잠시 후 다시 시도해주세요.", HttpStatus.CONFLICT),
     ORDER_WALLET_API_FAILED("WALLET-500-1", "지갑 정보를 불러올 수 없습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
 
-    // ===== 배송 =====
+    // ===== 쿠폰 =====
+    COUPON_NOT_FOUND("COUPON-404-1", "쿠폰을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    COUPON_NOT_AVAILABLE("COUPON-400-1", "현재 발급할 수 없는 쿠폰입니다.", HttpStatus.BAD_REQUEST),
+    COUPON_ALREADY_ISSUED("COUPON-409-1", "이미 발급받은 쿠폰입니다.", HttpStatus.CONFLICT),
+    COUPON_NOT_OWNED("COUPON-403-1", "보유하지 않은 쿠폰입니다.", HttpStatus.FORBIDDEN),
+    COUPON_ALREADY_USED("COUPON-400-2", "이미 사용한 쿠폰입니다.", HttpStatus.BAD_REQUEST),
+    COUPON_NOT_APPLICABLE("COUPON-400-3", "주문 금액 조건을 만족하지 않는 쿠폰입니다.", HttpStatus.BAD_REQUEST),
+    COUPON_ADMIN_REQUIRED("COUPON-403-2", "관리자만 쿠폰을 생성할 수 있습니다.", HttpStatus.FORBIDDEN),
+    COUPON_ISSUE_SOLD_OUT("COUPON-409-2", "쿠폰 발급 수량이 모두 소진되었습니다.", HttpStatus.CONFLICT),
 
     // ===== 결제 =====
     WALLET_NOT_FOUND("WALLET-404-1", "지갑을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
