@@ -9,10 +9,10 @@ spring:
     password: ${MYSQL_PASSWORD}
 
   flyway:
-    enabled: false
+    enabled: true
     locations: classpath:db/migration
     validate-on-migrate: true
-    clean-disabled: false       # 개발 중엔 DB를 밀어야 할 수도 있으니 허용
+    clean-disabled: true       # false는 쓰지말자. DB 밀어야 할 경우 DB 볼륨을 삭제하자
     baseline-on-migrate: true   # 팀원들 로컬 DB에 장부 자동 생성
     baseline-version: 0
 

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS market_coupons (
+CREATE TABLE market_coupons (
     id BIGINT NOT NULL AUTO_INCREMENT,
     created_at DATETIME(6),
     updated_at DATETIME(6),
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS market_coupons (
     CONSTRAINT uk_market_coupon_code UNIQUE (code)
 );
 
-CREATE TABLE IF NOT EXISTS market_member_coupons (
+CREATE TABLE market_member_coupons (
     id BIGINT NOT NULL AUTO_INCREMENT,
     created_at DATETIME(6),
     updated_at DATETIME(6),
@@ -33,5 +33,5 @@ CREATE TABLE IF NOT EXISTS market_member_coupons (
     CONSTRAINT fk_member_coupon_coupon FOREIGN KEY (coupon_id) REFERENCES market_coupons (id)
 );
 
-ALTER TABLE market_orders ADD COLUMN IF NOT EXISTS coupon_id BIGINT NULL;
-ALTER TABLE market_orders ADD COLUMN IF NOT EXISTS coupon_discount_amount BIGINT NOT NULL DEFAULT 0;
+ALTER TABLE market_orders ADD COLUMN coupon_id BIGINT NULL;
+ALTER TABLE market_orders ADD COLUMN coupon_discount_amount BIGINT NOT NULL DEFAULT 0;
