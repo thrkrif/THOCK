@@ -444,6 +444,10 @@ public class Order extends BaseIdAndTime {
         else if (deliveredCount == totalItems) {
             this.state = OrderState.DELIVERED;
         }
+        // 일부 상품만 배송 완료된 경우에도 배송 진행 상태로 표시
+        else if (deliveredCount > 0) {
+            this.state = OrderState.PARTIALLY_SHIPPED;
+        }
         // 7. 배송 중
         else if (shippingCount > 0) {
             this.state = (shippingCount + deliveredCount) == totalItems ?
