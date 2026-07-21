@@ -23,6 +23,14 @@ public record OrderCreateRequest (
 
         @Schema(description = "상세 주소", example = "ABC빌딩 4층")
         @NotBlank(message = "상세 주소는 필수입니다.")
-        String detailAddress
+        String detailAddress,
+
+        @Schema(description = "사용할 보유 쿠폰 ID", example = "10")
+        @Positive
+        Long couponId
 )
-{ }
+{
+    public OrderCreateRequest(List<Long> cartItemIds, String zipCode, String baseAddress, String detailAddress) {
+        this(cartItemIds, zipCode, baseAddress, detailAddress, null);
+    }
+}

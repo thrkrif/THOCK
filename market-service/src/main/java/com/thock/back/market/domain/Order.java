@@ -72,6 +72,12 @@ public class Order extends BaseIdAndTime {
     private Long totalSalePrice;
     private Long totalDiscountAmount;
 
+    @Column(name = "coupon_id")
+    private Long couponId;
+
+    @Column(nullable = false)
+    private Long couponDiscountAmount;
+
     // 배송지 정보
     @Embedded
     private ShippingAddress shippingAddress;
@@ -101,6 +107,7 @@ public class Order extends BaseIdAndTime {
         this.totalPrice = 0L;
         this.totalSalePrice = 0L;
         this.totalDiscountAmount = 0L;
+        this.couponDiscountAmount = 0L;
     }
 
     /**
@@ -576,5 +583,17 @@ public class Order extends BaseIdAndTime {
 
     public void assignIdempotencyKey(String idempotencyKey) {
         this.idempotencyKey = idempotencyKey;
+    }
+
+    public void applyCoupon(Long couponId, Long discountAmount) {
+        if (this.state != OrderState.PENDING_PAYMENT || this.couponId != null
+                || couponId == null || discountAmount == null || discountAmount <= 0
+                || discountAmount > this.totalSalePrice) {
+            throw new CustomException(ErrorCode.COUPON_NOT_APPLICABLE);
+        }
+        this.couponId = couponId;
+        this.couponDiscountAmount = discountAmount;
+        this.totalSalePrice -= discountAmount;
+        this.totalDiscountAmount += discountAmount;
     }
 }

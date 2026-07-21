@@ -100,6 +100,16 @@ public enum ErrorCode {
     SHIPPING_SELLER_FORBIDDEN("SHIPPING-403-1", "해당 상품의 판매자만 배송을 처리할 수 있습니다.", HttpStatus.FORBIDDEN),
     SHIPPING_ORDER_ITEM_NOT_READY("SHIPPING-400-2", "배송을 시작할 수 없는 주문 상품 상태입니다.", HttpStatus.BAD_REQUEST),
 
+    // ===== 쿠폰 =====
+    COUPON_NOT_FOUND("COUPON-404-1", "쿠폰을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    COUPON_NOT_AVAILABLE("COUPON-400-1", "현재 발급할 수 없는 쿠폰입니다.", HttpStatus.BAD_REQUEST),
+    COUPON_ALREADY_ISSUED("COUPON-409-1", "이미 발급받은 쿠폰입니다.", HttpStatus.CONFLICT),
+    COUPON_NOT_OWNED("COUPON-403-1", "보유하지 않은 쿠폰입니다.", HttpStatus.FORBIDDEN),
+    COUPON_ALREADY_USED("COUPON-400-2", "이미 사용한 쿠폰입니다.", HttpStatus.BAD_REQUEST),
+    COUPON_NOT_APPLICABLE("COUPON-400-3", "주문 금액 조건을 만족하지 않는 쿠폰입니다.", HttpStatus.BAD_REQUEST),
+    COUPON_ADMIN_REQUIRED("COUPON-403-2", "관리자만 쿠폰을 생성할 수 있습니다.", HttpStatus.FORBIDDEN),
+    COUPON_ISSUE_SOLD_OUT("COUPON-409-2", "쿠폰 발급 수량이 모두 소진되었습니다.", HttpStatus.CONFLICT),
+
     // ===== 결제 =====
     WALLET_NOT_FOUND("WALLET-404-1", "지갑을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     WALLET_IS_LOCKED("WALLET-404-2", "이 지갑은 현재 정지 된 상태입니다.", HttpStatus.NOT_FOUND),
