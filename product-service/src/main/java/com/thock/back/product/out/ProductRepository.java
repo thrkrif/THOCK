@@ -17,7 +17,7 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // 상품명으로 검색 (부분 일치)
-    List<Product> findByNameContaining(String keyword);
+    Page<Product> findByNameContaining(String keyword, Pageable pageable);
 
     // 카테고리로 검색 (페이징)
     Page<Product> findByCategory(Category category, Pageable pageable);

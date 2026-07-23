@@ -88,6 +88,8 @@ spring:
                   - /api/v1/products/search
                 excludeGetPaths:
                   - /api/v1/products/*
+                  - /api/v1/products/*/reviews
+                  - /api/v1/products/reviews/summaries
 
         # 3. Market Service (장바구니, 주문)
         - id: market-service
