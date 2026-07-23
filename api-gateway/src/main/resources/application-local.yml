@@ -17,4 +17,4 @@ swagger:
 
 # CORS Local 설정
 cors:
-  allowed.origins: http://localhost:8080
+  allowed.origins: http://localhost:8080,http://localhost:5173,https://thock.site,https://www.thock.site

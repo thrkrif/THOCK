@@ -48,6 +48,9 @@ public class CorsGlobalConfiguration {
         // 인증 정보 허용
         corsConfig.setAllowCredentials(true);
 
+        // Vercel 개발 프론트에서 로컬 API Gateway로의 접근 허용
+        corsConfig.setAllowPrivateNetwork(true);
+
         // Preflight 캐시 시간
         corsConfig.setMaxAge(3600L);
 

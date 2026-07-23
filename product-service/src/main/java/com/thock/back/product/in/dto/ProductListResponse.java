@@ -7,6 +7,9 @@ public record ProductListResponse (
         String name,
         String imageUrl,
         Long price,
+        Long originalPrice,
+        Long salePrice,
+        String category,
         String nickname
 ) {
     public ProductListResponse(Product product) {
@@ -15,6 +18,9 @@ public record ProductListResponse (
                 product.getName(),
                 product.getImageUrl(),
                 product.getPrice(),
+                product.getPrice(),
+                product.getSalePrice(),
+                product.getCategory().name(),
                 "판매자 " + product.getSellerId()
         );
     }

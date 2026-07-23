@@ -121,10 +121,12 @@ public class ProductController {
             @ApiResponse(responseCode = "200", description = "검색 성공")
     })
     @GetMapping("/search")
-    public ResponseEntity<List<ProductListResponse>> searchProducts(
-            @Parameter(description = "검색어") @RequestParam String keyword
+    public ResponseEntity<Page<ProductListResponse>> searchProducts(
+            @Parameter(description = "검색어") @RequestParam String keyword,
+            @ParameterObject @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+
     ) {
-        return ResponseEntity.ok(productQueryService.searchProductsByKeyword(keyword));
+        return ResponseEntity.ok(productQueryService.searchProductsByKeyword(keyword, pageable));
     }
 
     @Operation(

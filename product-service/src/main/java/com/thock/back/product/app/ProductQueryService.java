@@ -33,13 +33,12 @@ public class ProductQueryService {
         return new ProductDetailResponse(product);
     }
 
-    public List<ProductListResponse> searchProductsByKeyword(String keyword) {
+    public Page<ProductListResponse> searchProductsByKeyword(String keyword, Pageable pageable) {
         if (keyword == null || keyword.isBlank()) {
-            return List.of();
+            return Page.empty(pageable);
         }
-        return productRepository.findByNameContaining(keyword).stream()
-                .map(ProductListResponse::new)
-                .toList();
+        return productRepository.findByNameContaining(keyword.trim(), pageable)
+                .map(ProductListResponse::new);
     }
 
     public List<ProductInternalResponse> getProductsByIds(List<Long> productIds) {

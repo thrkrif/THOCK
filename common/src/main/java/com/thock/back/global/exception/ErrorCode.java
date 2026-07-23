@@ -70,6 +70,9 @@ public enum ErrorCode {
     PRODUCT_STOCK_NOT_ENOUGH("PRODUCT-409-1", "재고가 부족합니다.", HttpStatus.CONFLICT),
     PRODUCT_RESERVED_STOCK_NOT_ENOUGH("PRODUCT-409-2", "예약 재고가 부족합니다.", HttpStatus.CONFLICT),
 
+    PRODUCT_REVIEW_NOT_FOUND("REVIEW-404-1", "리뷰를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    PRODUCT_REVIEW_FORBIDDEN("REVIEW-403-1", "본인이 작성한 리뷰만 삭제할 수 있습니다.", HttpStatus.FORBIDDEN),
+
     // ===== 장바구니 =====
     CART_PRODUCT_OUT_OF_STOCK("CART-400-1", "선택하신 상품의 재고가 부족합니다.", HttpStatus.BAD_REQUEST),
     CART_EMPTY("CART-400-2", "장바구니가 비어있습니다.", HttpStatus.BAD_REQUEST),
