@@ -64,6 +64,9 @@ k6/*.json
 *.trace.db
 .DS_store
 .claude
+*.pptx
+*.png
+*.js
 
 ### AWS EC2 Environment/Sensitive Files ###
 AWS EC2/deploy-kubernetes/base/secrets.yaml

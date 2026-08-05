@@ -824,9 +824,19 @@
           "expr": "sum(rate(http_server_requests_seconds_count{job=\"market-service\",uri=~\"/api/.*\",status=~\"5..\"}[$__rate_interval]))",
           "legendFormat": "RPS 5xx",
           "refId": "D"
+        },
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count{job=\"market-service\",uri=\"/api/v1/orders\"}[$__rate_interval]))",
+          "legendFormat": "Orders RPS",
+          "refId": "E"
+        },
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count{job=\"market-service\",uri=\"/api/v1/orders\",status=~\"2..\"}[$__rate_interval]))",
+          "legendFormat": "Orders success TPS",
+          "refId": "F"
         }
       ],
-      "description": "RPS all is every /api/* request per second. TPS success 2xx is successful /api/* requests per second. 4xx/5xx lines show client/server error request rates.",
+      "description": "RPS all is every /api/* request. Orders RPS/TPS isolate POST /api/v1/orders, which is the measured load-test endpoint.",
       "title": "API RPS / Success TPS Trend",
       "type": "timeseries"
     },
@@ -1850,13 +1860,23 @@
           "expr": "hikaricp_connections_idle{job=\"market-service\"}",
           "legendFormat": "idle",
           "refId": "C"
+        },
+        {
+          "expr": "hikaricp_connections{job=\"market-service\"}",
+          "legendFormat": "total",
+          "refId": "D"
+        },
+        {
+          "expr": "hikaricp_connections_max{job=\"market-service\"}",
+          "legendFormat": "max",
+          "refId": "E"
         }
       ],
       "title": "HikariCP 연결 상태",
       "type": "timeseries"
     }
   ],
-  "refresh": "10s",
+  "refresh": "5s",
   "schemaVersion": 38,
   "style": "dark",
   "tags": [
