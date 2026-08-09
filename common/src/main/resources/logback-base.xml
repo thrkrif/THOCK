@@ -5,6 +5,8 @@
 
     <!-- Console Appender (개발용 - 텍스트 형식) -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 스케줄러(scheduling-*) 스레드 로그는 콘솔에서 제외 (파일/Loki 적재는 유지) -->
+        <filter class="com.thock.back.global.logging.ScheduledThreadConsoleFilter"/>
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
