@@ -6,22 +6,22 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.StaleObjectStateException;
+import org.springframework.dao.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.dao.CannotAcquireLockException;
-import org.springframework.dao.DeadlockLoserDataAccessException;
-import org.springframework.dao.PessimisticLockingFailureException;
-import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.sql.SQLTransientConnectionException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * 전역 예외 처리 핸들러
@@ -204,6 +204,33 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
+                .body(errorResponse);
+    }
+
+    /**
+     * DB 커넥션 풀 / 스레드 풀 고갈 예외 처리
+     * HikariCP 커넥션 획득 타임아웃, 트랜잭션 시작 실패, 스레드풀 거부 등
+     * 서버 자원 고갈 상황을 별도로 식별해 503(SERVICE_UNAVAILABLE)로 응답
+     */
+    @ExceptionHandler({
+            SQLTransientConnectionException.class,
+            DataAccessResourceFailureException.class,
+            CannotCreateTransactionException.class,
+            RejectedExecutionException.class
+    })
+    public ResponseEntity<ErrorResponse> handleResourceExhaustedException(
+            Exception e,
+            HttpServletRequest request) {
+        log.error("[RESOURCE_EXHAUSTED] 서버 자원 고갈 발생: path={}, exceptionType={}",
+                request.getRequestURI(), e.getClass().getSimpleName(), e);
+
+        ErrorResponse errorResponse = ErrorResponse.of(
+                ErrorCode.SERVER_RESOURCE_EXHAUSTED,
+                request.getRequestURI()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(errorResponse);
     }
 
