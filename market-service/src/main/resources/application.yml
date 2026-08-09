@@ -11,9 +11,10 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      maximum-pool-size: 10
+      maximum-pool-size: 16
 
   jpa:
+    open-in-view: false
     properties:
       hibernate:
         default_batch_fetch_size: ${HIBERNATE_DEFAULT_BATCH_FETCH_SIZE:100}

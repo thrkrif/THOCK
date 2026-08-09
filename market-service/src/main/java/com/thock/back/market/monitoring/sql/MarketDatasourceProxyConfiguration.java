@@ -1,16 +1,16 @@
 package com.thock.back.market.monitoring.sql;
 
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
 import javax.sql.DataSource;
+import java.util.List;
 
 @Configuration
 public class MarketDatasourceProxyConfiguration {
@@ -24,7 +24,7 @@ public class MarketDatasourceProxyConfiguration {
                     return bean;
                 }
 
-                if (beanName != null && beanName.contains("proxy")) {
+                if (!"lazyDataSource".equals(beanName)) {
                     return bean;
                 }
 
