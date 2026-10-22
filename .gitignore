@@ -64,6 +64,8 @@ k6/*.json
 *.trace.db
 .DS_store
 .claude
+.omc/
+docs/perf-seed/
 *.pptx
 *.png
 *.js
