@@ -24,7 +24,7 @@ public class MarketDatasourceProxyConfiguration {
                     return bean;
                 }
 
-                if (!"lazyDataSource".equals(beanName)) {
+                if (!"dataSource".equals(beanName)) {
                     return bean;
                 }
 

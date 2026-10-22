@@ -18,9 +18,9 @@ import java.sql.SQLException;
 @Configuration
 public class LazyDataSourceConfig {
 
-    @Bean(name = "dataSource")
+    @Bean(name = "hikariDataSource")
     @ConfigurationProperties("spring.datasource.hikari")
-    public HikariDataSource dataSource(
+    public HikariDataSource hikariDataSource(
             DataSourceProperties dataSourceProperties
     ) {
         return dataSourceProperties
@@ -29,13 +29,13 @@ public class LazyDataSourceConfig {
                 .build();
     }
 
-    @Bean(name = "lazyDataSource")
+    @Bean(name = "dataSource")
     @Primary
-    public DataSource lazyDataSource(
-            @Qualifier("dataSource") DataSource targetDataSource
+    public DataSource dataSource(
+            @Qualifier("hikariDataSource") DataSource pooledDataSource
     ) {
         // TODO(debug): 주문 생성 API 한정 실제 커넥션 획득 시점 확인용 임시 로깅. 확인 끝나면 제거.
-        return new LazyConnectionDataSourceProxy(new OrderCreationConnectionAcquisitionLoggingDataSource(targetDataSource));
+        return new LazyConnectionDataSourceProxy(new OrderCreationConnectionAcquisitionLoggingDataSource(pooledDataSource));
     }
 
     // LazyConnectionDataSourceProxy가 감싸는 실제(Hikari) DataSource를 가로채므로,
