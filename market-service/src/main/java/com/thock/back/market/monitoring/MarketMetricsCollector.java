@@ -113,9 +113,14 @@ public class MarketMetricsCollector {
     }
 
     private void collectOrderAndOutboxMetrics() {
+        Map<OrderState, Long> orderCounts = new EnumMap<>(OrderState.class);
+        for (OrderRepository.OrderStateCount row : orderRepository.countGroupByState()) {
+            orderCounts.put(row.getState(), row.getCount());
+        }
+
         long totalOrders = 0;
         for (OrderState state : OrderState.values()) {
-            long count = orderRepository.countByState(state);
+            long count = orderCounts.getOrDefault(state, 0L);
             orderStateCount.get(state).set(count);
             totalOrders += count;
         }
