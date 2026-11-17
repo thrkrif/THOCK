@@ -27,6 +27,8 @@
 
 ## 2. 측정 준비 (직접)
 
+항목별 상세 절차와 `EXPLAIN` 읽는 법은 [query-measurement-guide.md](query-measurement-guide.md) 참고.
+
 1. 슬로우 로그 설정 (선택): `SET GLOBAL slow_query_log=ON; SET GLOBAL long_query_time=0.1;`
 2. digest 통계 초기화:
    ```sql
