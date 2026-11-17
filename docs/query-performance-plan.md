@@ -74,6 +74,8 @@ LIMIT 20;
 
 쿼리별 전/후: `rows_examined`, `avg_ms`, `total_sec`, k6 p95 응답시간 / 에러율.
 
+측정한 결과는 [query-analysis.md의 결과 섹션](query-analysis.md#결과)에 항목별로 기록합니다.
+
 ## 6. 적용 시 주의
 
 - market/product: Flyway 마이그레이션 추가 (local 프로파일은 Flyway 꺼져 있음)
