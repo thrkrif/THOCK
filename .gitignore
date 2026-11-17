@@ -75,3 +75,6 @@ AWS EC2/deploy-docker-compose/nginx/ssl/*.key
 AWS EC2/deploy-docker-compose/nginx/ssl/*.crt
 
 beadv4-4-Refactoring-FE-Deploy/
+
+# oh-my-claudecode 런타임 상태
+.omc/
