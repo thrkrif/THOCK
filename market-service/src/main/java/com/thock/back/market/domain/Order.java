@@ -42,6 +42,12 @@ import static jakarta.persistence.FetchType.LAZY;
                         name = "uk_orders_buyer_id_idempotency_key",
                         columnNames = {"buyer_id", "idempotency_key"}
                 )
+        },
+        indexes = {
+                // 상태별 집계(메트릭), 결제 타임아웃 스케줄러 (V4)
+                @Index(name = "idx_orders_state_request_payment", columnList = "state, request_payment_date"),
+                // 취소 주문 정리 스케줄러 (V4)
+                @Index(name = "idx_orders_state_cancel_date", columnList = "state, cancel_date")
         })
 @Getter
 @NoArgsConstructor
