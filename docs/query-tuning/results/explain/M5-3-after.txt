@@ -1,0 +1,14 @@
+# M5-3 (after) db=thock_market_db
+select oe1_0.id,oe1_0.status,oe1_0.retry_count from outbox_event oe1_0 where oe1_0.status='FAILED' and oe1_0.retry_count<5 order by oe1_0.created_at
+
+## EXPLAIN
++----+-------------+-------+------------+------+---------------------------+---------------------------+---------+-------+------+----------+------------------------------------+
+| id | select_type | table | partitions | type | possible_keys             | key                       | key_len | ref   | rows | filtered | Extra                              |
++----+-------------+-------+------------+------+---------------------------+---------------------------+---------+-------+------+----------+------------------------------------+
+|  1 | SIMPLE      | oe1_0 | NULL       | ref  | idx_outbox_status_created | idx_outbox_status_created | 1       | const | 1906 |    33.33 | Using index condition; Using where |
++----+-------------+-------+------------+------+---------------------------+---------------------------+---------+-------+------+----------+------------------------------------+
+## EXPLAIN ANALYZE
+-> Filter: (oe1_0.retry_count < 5)  (cost=1336 rows=635) (actual time=12.2..12.2 rows=0 loops=1)
+    -> Index lookup on oe1_0 using idx_outbox_status_created (status='FAILED'), with index condition: (oe1_0.`status` = 'FAILED')  (cost=1336 rows=1906) (actual time=1.48..12.1 rows=1906 loops=1)
+
+## median_ms=8.449  (server time, runs: 4.648 7.661 11.321 40.623 8.449 )

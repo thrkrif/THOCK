@@ -16,7 +16,10 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "payment_payments")
+// [H2] 결제 확정/환불/취소 경로의 findByOrderId 용. payment 는 Flyway 가 없고 ddl-auto=update 라
+// 기동 시 Hibernate 가 이 인덱스를 만든다. (UNIQUE 는 기존 중복 주문번호 데이터 정리 후 검토)
+@Table(name = "payment_payments",
+        indexes = @Index(name = "idx_payment_order_id", columnList = "order_id"))
 @Slf4j
 public class Payment extends BaseIdAndTime {
     private Long amount;

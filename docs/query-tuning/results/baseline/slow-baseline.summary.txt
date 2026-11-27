@@ -1,0 +1,49 @@
+Count: 231  Time=0.51s (118s)  Lock=0.00s (0s)  Rows=1.0 (231), root[root]@[172.27.0.1]
+  select count(o1_0.id) from market_orders o1_0 where o1_0.state='S'
+
+Count: 220  Time=0.46s (100s)  Lock=0.00s (0s)  Rows=12.0 (2640), root[root]@[172.27.0.1]
+  select pr1_0.product_id,avg(pr1_0.rating),count(pr1_0.id) from product_reviews pr1_0 where pr1_0.product_id in (N,N,N,N,N,N,N,N,N,N,N,N) group by pr1_0.product_id
+
+Count: 158  Time=0.62s (98s)  Lock=0.00s (0s)  Rows=1.1 (166), root[root]@[172.27.0.1]
+  select p1_0.id,p1_0.category,p1_0.created_at,p1_0.description,p1_0.detail,p1_0.image_url,p1_0.name,p1_0.price,p1_0.reserved_stock,p1_0.sale_ended_at,p1_0.sale_price,p1_0.sale_started_at,p1_0.seller_id,p1_0.state,p1_0.stock,p1_0.updated_at,p1_0.view_count from products p1_0 where p1_0.name like 'S' escape '\ order by p1_0.id desc limit N
+
+Count: 429  Time=0.20s (83s)  Lock=0.00s (0s)  Rows=1.0 (429), root[root]@[172.27.0.1]
+  select count(p1_0.id) from products p1_0 where p1_0.seller_id=N
+
+Count: 281  Time=0.16s (44s)  Lock=0.00s (0s)  Rows=1.0 (281), root[root]@[172.27.0.1]
+  select count(p1_0.id) from products p1_0 where p1_0.category='S'
+
+Count: 62  Time=0.68s (42s)  Lock=0.00s (0s)  Rows=12.0 (744), root[root]@[172.27.0.1]
+  select p1_0.id,p1_0.category,p1_0.created_at,p1_0.description,p1_0.detail,p1_0.image_url,p1_0.name,p1_0.price,p1_0.reserved_stock,p1_0.sale_ended_at,p1_0.sale_price,p1_0.sale_started_at,p1_0.seller_id,p1_0.state,p1_0.stock,p1_0.updated_at,p1_0.view_count from products p1_0 where p1_0.category='S' order by p1_0.price limit N,N
+
+Count: 97  Time=0.35s (33s)  Lock=0.00s (0s)  Rows=1.0 (97), root[root]@[172.27.0.1]
+  select count(p1_0.id) from products p1_0 where p1_0.name like 'S' escape '\
+
+Count: 41  Time=0.45s (18s)  Lock=0.00s (0s)  Rows=2758.0 (113078), root[root]@[172.27.0.1]
+  select s1_0.id,s1_0.carrier,s1_0.created_at,s1_0.delivered_at,s1_0.order_item_id,s1_0.seller_id,s1_0.shipped_at,s1_0.status,s1_0.tracking_number,s1_0.updated_at,s1_0.version from market_shipments s1_0 where s1_0.seller_id=N order by s1_0.created_at desc
+
+Count: 16  Time=0.64s (10s)  Lock=0.00s (0s)  Rows=12.0 (192), root[root]@[172.27.0.1]
+  select p1_0.id,p1_0.category,p1_0.created_at,p1_0.description,p1_0.detail,p1_0.image_url,p1_0.name,p1_0.price,p1_0.reserved_stock,p1_0.sale_ended_at,p1_0.sale_price,p1_0.sale_started_at,p1_0.seller_id,p1_0.state,p1_0.stock,p1_0.updated_at,p1_0.view_count from products p1_0 where p1_0.category='S' order by p1_0.price limit N
+
+Count: 6  Time=0.87s (5s)  Lock=0.00s (0s)  Rows=0.0 (0), root[root]@[172.27.0.1]
+  select o1_0.id,o1_0.buyer_id,o1_0.cancel_date,o1_0.coupon_discount_amount,o1_0.coupon_id,o1_0.created_at,o1_0.idempotency_key,o1_0.order_number,o1_0.payment_date,o1_0.request_payment_date,o1_0.base_address,o1_0.detail_address,o1_0.zip_code,o1_0.state,o1_0.total_discount_amount,o1_0.total_price,o1_0.total_sale_price,o1_0.updated_at,o1_0.version from market_orders o1_0 where o1_0.state='S' and o1_0.request_payment_date<'S'
+
+Count: 18  Time=0.14s (2s)  Lock=0.00s (0s)  Rows=1.0 (18), root[root]@[172.27.0.1]
+  select count(oe1_0.id) from outbox_event oe1_0 where oe1_0.status='S'
+
+Count: 1  Time=1.85s (1s)  Lock=0.00s (0s)  Rows=2723.0 (2723), root[root]@[172.27.0.1]
+  select sl1_0.id,sl1_0.confirmed_at,sl1_0.created_at,sl1_0.daily_settlement_id,sl1_0.metadata,sl1_0.order_no,sl1_0.payment_amount,sl1_0.payment_method,sl1_0.product_id,sl1_0.product_name,sl1_0.product_price,sl1_0.product_quantity,sl1_0.reconciliation_status,sl1_0.seller_id,sl1_0.snapshot_at,sl1_0.transaction_type,sl1_0.updated_at from sales_log sl1_0 where sl1_0.snapshot_at between 'S' and 'S'
+
+Count: 1  Time=1.44s (1s)  Lock=0.00s (0s)  Rows=1.0 (1), root[root]@localhost
+  SELECT reconciliation_status, COUNT(*) FROM sales_log
+  WHERE snapshot_at >= 'S' AND snapshot_at < 'S' + INTERVAL N DAY GROUP BY N
+
+Count: 4  Time=0.19s (0s)  Lock=0.00s (0s)  Rows=636.0 (2544), root[root]@[172.27.0.1]
+  select distinct o1_0.id,o1_0.buyer_id,o1_0.cancel_date,o1_0.coupon_discount_amount,o1_0.coupon_id,o1_0.created_at,o1_0.idempotency_key,i1_0.order_id,i1_0.id,i1_0.cancel_reason_detail,i1_0.cancel_reason_type,i1_0.created_at,i1_0.delivered_at,i1_0.discount_amount,i1_0.fee_amount,i1_0.payout_amount,i1_0.payout_rate,i1_0.price,i1_0.product_id,i1_0.product_image_url,i1_0.product_name,i1_0.quantity,i1_0.sale_price,i1_0.seller_id,i1_0.state,i1_0.total_price,i1_0.total_sale_price,i1_0.updated_at,o1_0.order_number,o1_0.payment_date,o1_0.request_payment_date,o1_0.base_address,o1_0.detail_address,o1_0.zip_code,o1_0.state,o1_0.total_discount_amount,o1_0.total_price,o1_0.total_sale_price,o1_0.updated_at,o1_0.version from market_orders o1_0 left join market_order_items i1_0 on o1_0.id=i1_0.order_id where o1_0.buyer_id=N order by o1_0.created_at desc
+
+Count: 1  Time=0.25s (0s)  Lock=0.00s (0s)  Rows=0.0 (0), root[root]@[172.27.0.1]
+  select sl1_0.id,sl1_0.confirmed_at,sl1_0.created_at,sl1_0.daily_settlement_id,sl1_0.metadata,sl1_0.order_no,sl1_0.payment_amount,sl1_0.payment_method,sl1_0.product_id,sl1_0.product_name,sl1_0.product_price,sl1_0.product_quantity,sl1_0.reconciliation_status,sl1_0.seller_id,sl1_0.snapshot_at,sl1_0.transaction_type,sl1_0.updated_at from sales_log sl1_0 where sl1_0.snapshot_at between 'S' and 'S' and sl1_0.reconciliation_status='S'
+
+Count: 1  Time=0.22s (0s)  Lock=0.00s (0s)  Rows=0.0 (0), root[root]@[172.27.0.1]
+  select oe1_0.id,oe1_0.aggregate_id,oe1_0.aggregate_type,oe1_0.created_at,oe1_0.event_type,oe1_0.last_error_message,oe1_0.payload,oe1_0.processing_started_at,oe1_0.retry_count,oe1_0.sent_at,oe1_0.status,oe1_0.topic,oe1_0.version from outbox_event oe1_0 where oe1_0.status='S' order by oe1_0.created_at limit N
+

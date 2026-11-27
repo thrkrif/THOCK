@@ -1,0 +1,14 @@
+# M3-1 (before) db=thock_market_db
+select oi1_0.id,oi1_0.order_id,oi1_0.state,oi1_0.delivered_at from market_order_items oi1_0 where oi1_0.state='DELIVERED' and oi1_0.delivered_at<now()-interval 7 day
+
+## EXPLAIN
++----+-------------+-------+------------+------+---------------+------+---------+------+---------+----------+-------------+
+| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
++----+-------------+-------+------------+------+---------------+------+---------+------+---------+----------+-------------+
+|  1 | SIMPLE      | oi1_0 | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1190732 |     5.55 | Using where |
++----+-------------+-------+------------+------+---------------+------+---------+------+---------+----------+-------------+
+## EXPLAIN ANALYZE
+-> Filter: ((oi1_0.state = 'DELIVERED') and (oi1_0.delivered_at < <cache>((now() - interval 7 day))))  (cost=122674 rows=66145) (actual time=42.3..791 rows=36031 loops=1)
+    -> Table scan on oi1_0  (cost=122674 rows=1.19e+6) (actual time=1.1..717 rows=1.23e+6 loops=1)
+
+## median_ms=379.337  (server time, runs: 379.337 392.828 381.255 376.853 354.702 )

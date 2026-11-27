@@ -1,0 +1,15 @@
+# H1-1 (before) db=thock_market_db
+select count(o1_0.id) from market_orders o1_0 where o1_0.state='CONFIRMED'
+
+## EXPLAIN
++----+-------------+-------+------------+------+---------------+------+---------+------+---------+----------+-------------+
+| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
++----+-------------+-------+------------+------+---------------+------+---------+------+---------+----------+-------------+
+|  1 | SIMPLE      | o1_0  | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1025869 |    12.50 | Using where |
++----+-------------+-------+------------+------+---------------+------+---------+------+---------+----------+-------------+
+## EXPLAIN ANALYZE
+-> Aggregate: count(o1_0.id)  (cost=129797 rows=1) (actual time=1332..1332 rows=1 loops=1)
+    -> Filter: (o1_0.state = 'CONFIRMED')  (cost=116974 rows=128234) (actual time=13.7..1310 rows=709990 loops=1)
+        -> Table scan on o1_0  (cost=116974 rows=1.03e+6) (actual time=0.922..1217 rows=1.03e+6 loops=1)
+
+## median_ms=325.156  (server time, runs: 320.326 325.156 329.821 310.707 368.989 )

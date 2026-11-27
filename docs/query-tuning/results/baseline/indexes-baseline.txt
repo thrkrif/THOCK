@@ -1,0 +1,26 @@
++---------------------+--------------------+-------------------------------------+-----------------------------+------+
+| db                  | tbl                | idx                                 | cols                        | uniq |
++---------------------+--------------------+-------------------------------------+-----------------------------+------+
+| thock_market_db     | market_order_items | FKt0mkyvksep8vw65b58987dl2l         | order_id                    |    0 |
+| thock_market_db     | market_order_items | idx_seller_order                    | seller_id,order_id          |    0 |
+| thock_market_db     | market_order_items | idx_seller_state                    | seller_id,state             |    0 |
+| thock_market_db     | market_order_items | PRIMARY                             | id                          |    1 |
+| thock_market_db     | market_orders      | PRIMARY                             | id                          |    1 |
+| thock_market_db     | market_orders      | uk_orders_buyer_id_idempotency_key  | buyer_id,idempotency_key    |    1 |
+| thock_market_db     | market_orders      | UKjrqqjb5woi2gmtpeagh0ene4p         | order_number                |    1 |
+| thock_market_db     | market_shipments   | PRIMARY                             | id                          |    1 |
+| thock_market_db     | market_shipments   | uk_market_shipment_order_item       | order_item_id               |    1 |
+| thock_market_db     | outbox_event       | idx_outbox_aggregate                | aggregate_type,aggregate_id |    0 |
+| thock_market_db     | outbox_event       | idx_outbox_status_created           | status,created_at           |    0 |
+| thock_market_db     | outbox_event       | PRIMARY                             | id                          |    1 |
+| thock_payment_db    | payment_payments   | FKjvimdgbopygdxd978jnh5qq2e         | buyer_id                    |    0 |
+| thock_payment_db    | payment_payments   | PRIMARY                             | id                          |    1 |
+| thock_product_db    | product_reviews    | idx_product_reviews_product_created | product_id,created_at,id    |    0 |
+| thock_product_db    | product_reviews    | PRIMARY                             | id                          |    1 |
+| thock_product_db    | products           | idx_products_category_id            | category,id                 |    0 |
+| thock_product_db    | products           | PRIMARY                             | id                          |    1 |
+| thock_settlement_db | sales_log          | idx_sales_log_order_no              | order_no                    |    0 |
+| thock_settlement_db | sales_log          | idx_sales_log_seller                | seller_id                   |    0 |
+| thock_settlement_db | sales_log          | idx_sales_log_status                | reconciliation_status       |    0 |
+| thock_settlement_db | sales_log          | PRIMARY                             | id                          |    1 |
++---------------------+--------------------+-------------------------------------+-----------------------------+------+

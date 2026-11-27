@@ -81,4 +81,13 @@ public interface OutboxEventRepository extends JpaRepository<OutboxEvent, Long> 
 
     long countByStatus(OutboxStatus status);
 
+    // [M5] 모니터링용: 상태별 건수를 한 번에 집계 (상태마다 countByStatus 를 부르면 상태 수만큼 쿼리가 나감)
+    @Query("select o.status as status, count(o) as count from OutboxEvent o group by o.status")
+    List<OutboxStatusCount> countGroupByStatus();
+
+    interface OutboxStatusCount {
+        OutboxStatus getStatus();
+
+        long getCount();
+    }
 }

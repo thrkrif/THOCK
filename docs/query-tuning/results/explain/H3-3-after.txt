@@ -1,0 +1,25 @@
+# H3-3 (after) db=thock_product_db
+select p.* from products p join (select id from products force index (idx_products_name) where name like concat('%','M123456','%') order by id desc limit 12 offset 0) matched on matched.id = p.id order by p.id desc
+
+## EXPLAIN
++----+-------------+------------+------------+--------+---------------+-------------------+---------+------------+--------+----------+------------------------------------------+
+| id | select_type | table      | partitions | type   | possible_keys | key               | key_len | ref        | rows   | filtered | Extra                                    |
++----+-------------+------------+------------+--------+---------------+-------------------+---------+------------+--------+----------+------------------------------------------+
+|  1 | PRIMARY     | <derived2> | NULL       | ALL    | NULL          | NULL              | NULL    | NULL       |     12 |   100.00 | Using temporary; Using filesort          |
+|  1 | PRIMARY     | p          | NULL       | eq_ref | PRIMARY       | PRIMARY           | 8       | matched.id |      1 |   100.00 | NULL                                     |
+|  2 | DERIVED     | products   | NULL       | index  | NULL          | idx_products_name | 1022    | NULL       | 485463 |    11.11 | Using where; Using index; Using filesort |
++----+-------------+------------+------------+--------+---------------+-------------------+---------+------------+--------+----------+------------------------------------------+
+## EXPLAIN ANALYZE
+-> Sort row IDs: p.id DESC  (actual time=125..125 rows=1 loops=1)
+    -> Table scan on <temporary>  (cost=534029..534031 rows=12) (actual time=125..125 rows=1 loops=1)
+        -> Temporary table  (cost=534029..534029 rows=12) (actual time=125..125 rows=1 loops=1)
+            -> Nested loop inner join  (cost=534027 rows=12) (actual time=124..124 rows=1 loops=1)
+                -> Table scan on matched  (cost=534012..534014 rows=12) (actual time=124..124 rows=1 loops=1)
+                    -> Materialize  (cost=534012..534012 rows=12) (actual time=124..124 rows=1 loops=1)
+                        -> Limit: 12 row(s)  (cost=534010 rows=12) (actual time=124..124 rows=1 loops=1)
+                            -> Sort: products.id DESC, limit input to 12 row(s) per chunk  (cost=534010 rows=485463) (actual time=124..124 rows=1 loops=1)
+                                -> Filter: (products.`name` like <cache>(convert(concat('%','M123456','%') using utf8mb4)))  (cost=534010 rows=485463) (actual time=55.3..124 rows=1 loops=1)
+                                    -> Index scan on products using idx_products_name  (cost=534010 rows=485463) (actual time=0.146..50 rows=500522 loops=1)
+                -> Single-row index lookup on p using PRIMARY (id=matched.id)  (cost=1.01 rows=1) (actual time=0.469..0.469 rows=1 loops=1)
+
+## median_ms=111.307  (server time, runs: 110.468 114.225 111.307 115.149 110.262 )

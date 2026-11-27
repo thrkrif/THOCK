@@ -1,0 +1,14 @@
+# M7-1 (before) db=thock_settlement_db
+select sl1_0.id,sl1_0.order_no,sl1_0.transaction_type from sales_log sl1_0 where sl1_0.order_no='PERF-12345' and sl1_0.transaction_type='PAYMENT'
+
+## EXPLAIN
++----+-------------+-------+------------+------+------------------------+------------------------+---------+-------+------+----------+-------------+
+| id | select_type | table | partitions | type | possible_keys          | key                    | key_len | ref   | rows | filtered | Extra       |
++----+-------------+-------+------------+------+------------------------+------------------------+---------+-------+------+----------+-------------+
+|  1 | SIMPLE      | sl1_0 | NULL       | ref  | idx_sales_log_order_no | idx_sales_log_order_no | 1022    | const |    1 |    50.00 | Using where |
++----+-------------+-------+------------+------+------------------------+------------------------+---------+-------+------+----------+-------------+
+## EXPLAIN ANALYZE
+-> Filter: (sl1_0.transaction_type = 'PAYMENT')  (cost=0.792 rows=0.5) (actual time=0.0577..0.059 rows=1 loops=1)
+    -> Index lookup on sl1_0 using idx_sales_log_order_no (order_no='PERF-12345')  (cost=0.792 rows=1) (actual time=0.0561..0.0574 rows=1 loops=1)
+
+## median_ms=0.065  (server time, runs: 0.091 0.043 0.046 0.065 0.569 )

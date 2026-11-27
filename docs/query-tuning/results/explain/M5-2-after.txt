@@ -1,0 +1,15 @@
+# M5-2 (after) db=thock_market_db
+select count(*) from outbox_event oe1_0 where oe1_0.status='SENT' and oe1_0.created_at<now()-interval 7 day and oe1_0.sent_at<now()-interval 7 day
+
+## EXPLAIN
++----+-------------+-------+------------+------+---------------------------+------+---------+------+--------+----------+-------------+
+| id | select_type | table | partitions | type | possible_keys             | key  | key_len | ref  | rows   | filtered | Extra       |
++----+-------------+-------+------------+------+---------------------------+------+---------+------+--------+----------+-------------+
+|  1 | SIMPLE      | oe1_0 | NULL       | ALL  | idx_outbox_status_created | NULL | NULL    | NULL | 498936 |    12.23 | Using where |
++----+-------------+-------+------------+------+---------------------------+------+---------+------+--------+----------+-------------+
+## EXPLAIN ANALYZE
+-> Aggregate: count(0)  (cost=51928 rows=1) (actual time=512..512 rows=1 loops=1)
+    -> Filter: ((oe1_0.`status` = 'SENT') and (oe1_0.created_at < <cache>((now() - interval 7 day))) and (oe1_0.sent_at < <cache>((now() - interval 7 day))))  (cost=45825 rows=61027) (actual time=0.261..509 rows=80712 loops=1)
+        -> Table scan on oe1_0  (cost=45825 rows=498936) (actual time=0.255..452 rows=516389 loops=1)
+
+## median_ms=168.867  (server time, runs: 168.867 173.064 251.768 161.949 159.477 )

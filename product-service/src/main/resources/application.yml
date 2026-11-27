@@ -14,6 +14,13 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  # [M1] page/size 가 사용자 입력이라 size=2000 같은 요청이 그대로 DB 까지 갔다(기본 상한 2000).
+  # 목록 화면은 12~20개를 쓰므로 상한을 100으로 낮춘다. 넘는 값은 100으로 잘린다.
+  data:
+    web:
+      pageable:
+        max-page-size: 100
+
   jpa:
     show-sql: true
     properties:

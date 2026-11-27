@@ -16,7 +16,12 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @Entity
-@Table(name = "products")
+@Table(name = "products",
+        indexes = {
+                @Index(name = "idx_products_category_id", columnList = "category, id"),   // V5
+                @Index(name = "idx_products_seller_id", columnList = "seller_id, id"),    // 판매자 상품 목록 (V6)
+                @Index(name = "idx_products_name", columnList = "name")                   // 상품명 검색 count/지연 조인 (V7)
+        })
 @Getter
 @NoArgsConstructor
 public class Product extends BaseIdAndTime {

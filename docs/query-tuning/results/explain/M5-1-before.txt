@@ -1,0 +1,15 @@
+# M5-1 (before) db=thock_market_db
+select count(oe1_0.id) from outbox_event oe1_0 where oe1_0.status='SENT'
+
+## EXPLAIN
++----+-------------+-------+------------+------+---------------------------+---------------------------+---------+-------+--------+----------+--------------------------+
+| id | select_type | table | partitions | type | possible_keys             | key                       | key_len | ref   | rows   | filtered | Extra                    |
++----+-------------+-------+------------+------+---------------------------+---------------------------+---------+-------+--------+----------+--------------------------+
+|  1 | SIMPLE      | oe1_0 | NULL       | ref  | idx_outbox_status_created | idx_outbox_status_created | 1       | const | 249468 |   100.00 | Using where; Using index |
++----+-------------+-------+------------+------+---------------------------+---------------------------+---------+-------+--------+----------+--------------------------+
+## EXPLAIN ANALYZE
+-> Aggregate: count(oe1_0.id)  (cost=50408 rows=1) (actual time=413..413 rows=1 loops=1)
+    -> Filter: (oe1_0.`status` = 'SENT')  (cost=25461 rows=249468) (actual time=0.168..397 rows=514483 loops=1)
+        -> Covering index lookup on oe1_0 using idx_outbox_status_created (status='SENT')  (cost=25461 rows=249468) (actual time=0.157..356 rows=514483 loops=1)
+
+## median_ms=72.369  (server time, runs: 72.369 75.062 76.397 70.303 71.617 )

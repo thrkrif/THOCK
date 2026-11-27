@@ -51,7 +51,7 @@ class RunReconciliationUseCaseTest {
     @BeforeEach
     void setUp() {
         testDate = LocalDate.of(2026, 2, 11);
-        lenient().when(salesLogRepository.findByOrderNo(any())).thenReturn(List.of());
+        lenient().when(salesLogRepository.findByOrderNoIn(any())).thenReturn(List.of());
     }
 
     @Test
@@ -66,7 +66,7 @@ class RunReconciliationUseCaseTest {
 
         when(pgSalesRawRepository.findAllByTransactedAtBetween(any(), any()))
                 .thenReturn(List.of(pgRaw));
-        when(salesLogRepository.findByOrderNoAndTransactionType(orderNo, TransactionType.PAYMENT))
+        when(salesLogRepository.findByOrderNoIn(any()))
                 .thenReturn(List.of(internalLog));
 
         // when
@@ -90,7 +90,7 @@ class RunReconciliationUseCaseTest {
 
         when(pgSalesRawRepository.findAllByTransactedAtBetween(any(), any()))
                 .thenReturn(List.of(pgRaw));
-        when(salesLogRepository.findByOrderNoAndTransactionType(orderNo, TransactionType.PAYMENT))
+        when(salesLogRepository.findByOrderNoIn(any()))
                 .thenReturn(List.of(log1, log2));
 
         // when
@@ -112,7 +112,7 @@ class RunReconciliationUseCaseTest {
 
         when(pgSalesRawRepository.findAllByTransactedAtBetween(any(), any()))
                 .thenReturn(List.of(pgRaw));
-        when(salesLogRepository.findByOrderNoAndTransactionType(orderNo, TransactionType.PAYMENT))
+        when(salesLogRepository.findByOrderNoIn(any()))
                 .thenReturn(List.of(internalLog));
 
         // when
@@ -140,7 +140,7 @@ class RunReconciliationUseCaseTest {
 
         when(pgSalesRawRepository.findAllByTransactedAtBetween(any(), any()))
                 .thenReturn(List.of(pgRaw));
-        when(salesLogRepository.findByOrderNoAndTransactionType(orderNo, TransactionType.PAYMENT))
+        when(salesLogRepository.findByOrderNoIn(any()))
                 .thenReturn(List.of()); // DB 조회 결과 없음!
 
         // when
@@ -192,7 +192,7 @@ class RunReconciliationUseCaseTest {
 
         when(pgSalesRawRepository.findAllByTransactedAtBetween(any(), any()))
                 .thenReturn(List.of(pgRaw));
-        when(salesLogRepository.findByOrderNoAndTransactionType(orderNo, TransactionType.PAYMENT))
+        when(salesLogRepository.findByOrderNoIn(any()))
                 .thenReturn(List.of(internalLog));
 
         // when
@@ -223,7 +223,7 @@ class RunReconciliationUseCaseTest {
                 .thenReturn(List.of(pgRaw));
 
         // 우리 DB(SalesLog)를 뒤져보니 내역이 아예 없음 (Empty List 반환)
-        when(salesLogRepository.findByOrderNoAndTransactionType(orderNo, TransactionType.PAYMENT))
+        when(salesLogRepository.findByOrderNoIn(any()))
                 .thenReturn(List.of());
 
         // when
@@ -281,10 +281,9 @@ class RunReconciliationUseCaseTest {
 
         when(pgSalesRawRepository.findAllByTransactedAtBetween(any(), any()))
                 .thenReturn(List.of(pgRaw));
-        when(salesLogRepository.findByOrderNoAndTransactionType(orderNo, TransactionType.PAYMENT))
-                .thenReturn(List.of()); // 동일 상태 타입 조회 결과 없음
-        when(salesLogRepository.findByOrderNo(orderNo))
-                .thenReturn(List.of(refundLog)); // 같은 주문번호는 존재
+        // 같은 주문번호의 로그는 있지만 타입이 REFUND 뿐 (PAYMENT 로 거르면 0건)
+        when(salesLogRepository.findByOrderNoIn(any()))
+                .thenReturn(List.of(refundLog));
 
         // when
         runReconciliationUseCase.execute(testDate);
@@ -316,7 +315,7 @@ class RunReconciliationUseCaseTest {
 
         when(pgSalesRawRepository.findAllByTransactedAtBetween(any(), any()))
                 .thenReturn(List.of(pgRaw));
-        when(salesLogRepository.findByOrderNoAndTransactionType(orderNo, TransactionType.PAYMENT))
+        when(salesLogRepository.findByOrderNoIn(any()))
                 .thenReturn(List.of(keyboardLog, mouseLog));
 
         // when
@@ -327,6 +326,35 @@ class RunReconciliationUseCaseTest {
         assertThat(mouseLog.getReconciliationStatus()).isEqualTo(ReconciliationStatus.MATCH);
 
         // 일치하므로 에러 로그(MismatchLog)는 절대 저장되면 안 됨!
+        verify(mismatchLogRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("[M7] PG 건이 여러 개여도 SalesLog 는 주문번호 IN 조회 한 번으로 읽는다 (N+1 제거)")
+    void execute_LoadsSalesLogsInOneQuery() {
+        // given: 주문 3건 (결제 2건 + 환불 1건)
+        PgSalesRaw pg1 = createPgRaw("ORD-A", PgStatus.PAID, 10000L);
+        PgSalesRaw pg2 = createPgRaw("ORD-B", PgStatus.PAID, 20000L);
+        PgSalesRaw pg3 = createPgRaw("ORD-C", PgStatus.CANCELED, 30000L);
+        SalesLog logA = createSalesLog("ORD-A", TransactionType.PAYMENT, 10000L);
+        SalesLog logB = createSalesLog("ORD-B", TransactionType.PAYMENT, 20000L);
+        SalesLog logC = createSalesLog("ORD-C", TransactionType.REFUND, -30000L);
+
+        when(pgSalesRawRepository.findAllByTransactedAtBetween(any(), any()))
+                .thenReturn(List.of(pg1, pg2, pg3));
+        when(salesLogRepository.findByOrderNoIn(any()))
+                .thenReturn(List.of(logA, logB, logC));
+
+        // when
+        runReconciliationUseCase.execute(testDate);
+
+        // then: 세 건 모두 일치, SalesLog 조회는 1번
+        assertThat(logA.getReconciliationStatus()).isEqualTo(ReconciliationStatus.MATCH);
+        assertThat(logB.getReconciliationStatus()).isEqualTo(ReconciliationStatus.MATCH);
+        assertThat(logC.getReconciliationStatus()).isEqualTo(ReconciliationStatus.MATCH);
+        verify(salesLogRepository, times(1)).findByOrderNoIn(any());
+        verify(salesLogRepository, never()).findByOrderNoAndTransactionType(any(), any());
+        verify(salesLogRepository, never()).findByOrderNo(any());
         verify(mismatchLogRepository, never()).save(any());
     }
 
@@ -347,10 +375,8 @@ class RunReconciliationUseCaseTest {
 
         when(pgSalesRawRepository.findAllByTransactedAtBetween(any(), any()))
                 .thenReturn(List.of(successPg, failPg));
-        when(salesLogRepository.findByOrderNoAndTransactionType(successOrderNo, TransactionType.PAYMENT))
-                .thenReturn(List.of(successLog));
-        when(salesLogRepository.findByOrderNoAndTransactionType(failOrderNo, TransactionType.PAYMENT))
-                .thenReturn(List.of(failLog));
+        when(salesLogRepository.findByOrderNoIn(any()))
+                .thenReturn(List.of(successLog, failLog));
 
         // DB에 Job을 저장할 때 동작할 Mock 설정 (저장된 객체를 그대로 반환하도록)
         when(jobRepository.save(any(ReconciliationResult.class))).thenAnswer(invocation -> invocation.getArgument(0));

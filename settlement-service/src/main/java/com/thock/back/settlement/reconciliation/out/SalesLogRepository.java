@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,9 @@ public interface SalesLogRepository extends JpaRepository<SalesLog, Long> {
     List<SalesLog> findByOrderNo(String orderNo);
     List<SalesLog> findAllBySnapshotAtBetween(LocalDateTime start, LocalDateTime end);
     List<SalesLog> findByOrderNoAndTransactionType(String orderNo, TransactionType transactionType);
+
+    // 대사 배치용: 여러 주문번호의 SalesLog 를 한 번에 조회 (idx_sales_log_order_no 사용)
+    List<SalesLog> findByOrderNoIn(Collection<String> orderNos);
     List<SalesLog> findAllBySnapshotAtBetweenAndReconciliationStatus(LocalDateTime start, LocalDateTime end, ReconciliationStatus status);
 
     // -------- 내부 통신 관련 리포지토리 --------

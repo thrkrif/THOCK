@@ -20,7 +20,10 @@ public interface ShipmentRepository extends JpaRepository<Shipment, Long> {
     @Query("select s from Shipment s join fetch s.orderItem oi join fetch oi.order o where o.buyer.id = :memberId order by s.createdAt desc")
     List<Shipment> findByBuyerId(@Param("memberId") Long memberId);
 
-    List<Shipment> findBySellerIdOrderByCreatedAtDesc(Long sellerId);
+    // [M4] 응답(ShipmentResponse)이 주문상품/주문을 같이 쓰므로 함께 읽는다.
+    // 지연 로딩이면 batch fetch(100건 단위)로 주문상품·주문 조회가 배송 건수에 비례해 추가로 나간다.
+    @Query("select s from Shipment s join fetch s.orderItem oi join fetch oi.order o where s.sellerId = :sellerId order by s.createdAt desc")
+    List<Shipment> findBySellerIdOrderByCreatedAtDesc(@Param("sellerId") Long sellerId);
 
     List<Shipment> findAllByOrderByCreatedAtDesc();
 }

@@ -1,0 +1,29 @@
+H1-1  ## median_ms=127.593   type=ref key=idx_orders_state_request_payment rows=512934 Extra=Using where; Using index
+H1-2  ## median_ms=158.908   type=index key=idx_orders_state_request_payment rows=1025869 Extra=Using index
+H1-3  ## median_ms=0.05      type=ref key=idx_orders_state_cancel_date rows=1 Extra=Using index condition; Using where
+H1-4  ## median_ms=551.178   type=ref key=idx_orders_state_request_payment rows=254480 Extra=Using index condition; Using where
+H1-5  ## median_ms=0.072     type=range key=idx_orders_state_cancel_date rows=1 Extra=Using index condition
+H2-1  ## median_ms=0.084     type=ref key=idx_payment_order_id rows=1 Extra=NULL
+H3-1  ## median_ms=0.11      type=index key=PRIMARY rows=12 Extra=Using where; Backward index scan
+H3-2  ## median_ms=108.973   type=index key=idx_products_name rows=485463 Extra=Using where; Using index
+H3-3  ## median_ms=111.307   type=ALL key=NULL rows=12 Extra=Using temporary; Using filesort
+H3-4  ## median_ms=112.245   type=index key=idx_products_name rows=485463 Extra=Using where; Using index
+H3-5  ## median_ms=0.017     type=NULL key=NULL rows=NULL Extra=No tables used
+H3-6  ## median_ms=104.847   type=index key=idx_products_name rows=485463 Extra=Using where; Using index
+H4-1  ## median_ms=0.244     type=ref key=idx_products_seller_id rows=1495 Extra=Backward index scan
+H4-2  ## median_ms=0.197     type=ref key=idx_products_seller_id rows=1495 Extra=Using index
+H4-3  ## median_ms=2.867     type=ref key=idx_products_seller_id rows=57282 Extra=Using index
+M1-1  ## median_ms=213.979   type=ALL key=NULL rows=485463 Extra=Using where; Using filesort
+M1-2  ## median_ms=0.25      type=range key=idx_products_category_id rows=242731 Extra=Using index condition; Backward index scan
+M1-3  ## median_ms=76.922    type=ref key=idx_products_category_id rows=242731 Extra=Using where; Using index
+M2-1  ## median_ms=3.098     type=ref key=idx_orders_buyer_created rows=475 Extra=Backward index scan; Using temporary
+M2-2  ## median_ms=221.957   type=range key=idx_orders_buyer_created rows=17560 Extra=Using index condition; Backward index scan; Using MRR; Using temporary
+M3-1  ## median_ms=163.308   type=range key=idx_order_items_state_delivered rows=71470 Extra=Using index condition; Using MRR
+M4-1  ## median_ms=71.936    type=ref key=idx_shipments_seller_created rows=2758 Extra=Backward index scan
+M5-1  ## median_ms=68.905    type=index key=idx_outbox_status_created rows=498936 Extra=Using index
+M5-2  ## median_ms=168.867   type=ALL key=NULL rows=498936 Extra=Using where
+M5-3  ## median_ms=8.449     type=ref key=idx_outbox_status_created rows=1906 Extra=Using index condition; Using where
+M6-1  ## median_ms=32.962    type=range key=idx_sales_log_status_settle rows=5455 Extra=Using index condition; Using MRR
+M6-2  ## median_ms=0.054     type=range key=idx_sales_log_status_snapshot rows=1 Extra=Using index condition
+M7-1  ## median_ms=0.07      type=ref key=idx_sales_log_order_no rows=1 Extra=Using where
+M8-1  ## median_ms=4.318     type=range key=idx_product_reviews_product_rating rows=36989 Extra=Using where; Using index

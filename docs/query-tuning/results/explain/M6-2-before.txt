@@ -1,0 +1,14 @@
+# M6-2 (before) db=thock_settlement_db
+select sl1_0.id,sl1_0.order_no from sales_log sl1_0 where sl1_0.snapshot_at between '2026-10-15 00:00:00' and '2026-10-15 23:59:59.999999' and sl1_0.reconciliation_status='PENDING'
+
+## EXPLAIN
++----+-------------+-------+------------+------+----------------------+----------------------+---------+-------+-------+----------+------------------------------------+
+| id | select_type | table | partitions | type | possible_keys        | key                  | key_len | ref   | rows  | filtered | Extra                              |
++----+-------------+-------+------------+------+----------------------+----------------------+---------+-------+-------+----------+------------------------------------+
+|  1 | SIMPLE      | sl1_0 | NULL       | ref  | idx_sales_log_status | idx_sales_log_status | 1       | const | 38902 |    11.11 | Using index condition; Using where |
++----+-------------+-------+------------+------+----------------------+----------------------+---------+-------+-------+----------+------------------------------------+
+## EXPLAIN ANALYZE
+-> Filter: (sl1_0.snapshot_at between '2026-10-15 00:00:00' and '2026-10-15 23:59:59.999999')  (cost=22449 rows=4322) (actual time=89.5..89.5 rows=0 loops=1)
+    -> Index lookup on sl1_0 using idx_sales_log_status (reconciliation_status='PENDING'), with index condition: (sl1_0.reconciliation_status = 'PENDING')  (cost=22449 rows=38902) (actual time=1.1..84.5 rows=19998 loops=1)
+
+## median_ms=65.798  (server time, runs: 63.725 65.798 79.636 65.985 64.272 )

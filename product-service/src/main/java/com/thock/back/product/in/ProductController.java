@@ -11,6 +11,7 @@ import com.thock.back.product.in.dto.ProductDetailResponse;
 import com.thock.back.product.in.dto.ProductListResponse;
 import com.thock.back.product.in.dto.ProductUpdateRequest;
 import com.thock.back.product.in.dto.internal.ProductInternalResponse;
+import com.thock.back.product.in.support.ProductPageables;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -67,7 +68,7 @@ public class ProductController {
             @RequestParam Category category,
             @ParameterObject @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return ResponseEntity.ok(productQueryService.searchProductsByCategory(category, pageable));
+        return ResponseEntity.ok(productQueryService.searchProductsByCategory(category, ProductPageables.withAllowedSort(pageable)));
     }
 
     @Operation(summary = "상품 상세 조회", description = "상품 ID를 통해 상세 정보를 조회합니다.")
@@ -126,7 +127,7 @@ public class ProductController {
             @ParameterObject @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
 
     ) {
-        return ResponseEntity.ok(productQueryService.searchProductsByKeyword(keyword, pageable));
+        return ResponseEntity.ok(productQueryService.searchProductsByKeyword(keyword, ProductPageables.withAllowedSort(pageable)));
     }
 
     @Operation(
@@ -158,6 +159,6 @@ public class ProductController {
             @AuthUser AuthenticatedUser user,
             @ParameterObject @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return ResponseEntity.ok(productQueryService.getMyProducts(user.memberId(), pageable));
+        return ResponseEntity.ok(productQueryService.getMyProducts(user.memberId(), ProductPageables.withAllowedSort(pageable)));
     }
 }

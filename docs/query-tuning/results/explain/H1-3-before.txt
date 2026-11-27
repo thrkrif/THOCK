@@ -1,0 +1,14 @@
+# H1-3 (before) db=thock_market_db
+select o1_0.id,o1_0.buyer_id,o1_0.cancel_date,o1_0.created_at,o1_0.order_number,o1_0.state,o1_0.request_payment_date,o1_0.total_price from market_orders o1_0 where o1_0.state='PENDING_PAYMENT' and o1_0.request_payment_date<now()-interval 30 minute
+
+## EXPLAIN
++----+-------------+-------+------------+------+---------------+------+---------+------+---------+----------+-------------+
+| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
++----+-------------+-------+------------+------+---------------+------+---------+------+---------+----------+-------------+
+|  1 | SIMPLE      | o1_0  | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1025869 |     4.17 | Using where |
++----+-------------+-------+------------+------+---------------+------+---------+------+---------+----------+-------------+
+## EXPLAIN ANALYZE
+-> Filter: ((o1_0.state = 'PENDING_PAYMENT') and (o1_0.request_payment_date < <cache>((now() - interval 30 minute))))  (cost=105013 rows=42740) (actual time=448..448 rows=0 loops=1)
+    -> Table scan on o1_0  (cost=105013 rows=1.03e+6) (actual time=0.209..394 rows=1.03e+6 loops=1)
+
+## median_ms=402.282  (server time, runs: 402.282 596.821 521.732 350.726 350.715 )

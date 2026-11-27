@@ -1,0 +1,10 @@
++------------+---------+----------+----------------------------------------------------------------------------------------------------------------+
+| exec_count | avg_ms  | total_ms | q                                                                                                              |
++------------+---------+----------+----------------------------------------------------------------------------------------------------------------+
+|          3 |  144.37 |    433.1 | SELECT `sl1_0` . `id` , `sl1_0` . `confirmed_at` , `sl1_0` . `created_at` , `sl1_0` . `daily_settlement_id` ,  |
+|          1 |   19.11 |     19.1 | ALTER TABLE `sales_log` MODIFY COLUMN `payment_method` ENUM (...)                                              |
+|          1 |   20.17 |     20.2 | ALTER TABLE `sales_log` MODIFY COLUMN `reconciliation_status` ENUM (...) NOT NULL                              |
+|          1 |    9.01 |        9 | ALTER TABLE `sales_log` MODIFY COLUMN `transaction_type` ENUM (...) NOT NULL                                   |
+|          1 | 1087.44 |   1087.4 | SELECT `sl1_0` . `id` , `sl1_0` . `confirmed_at` , `sl1_0` . `created_at` , `sl1_0` . `daily_settlement_id` ,  |
+|          1 |    2.13 |      2.1 | SELECT `sl1_0` . `id` , `sl1_0` . `confirmed_at` , `sl1_0` . `created_at` , `sl1_0` . `daily_settlement_id` ,  |
++------------+---------+----------+----------------------------------------------------------------------------------------------------------------+

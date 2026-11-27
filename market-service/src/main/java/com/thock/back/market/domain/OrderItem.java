@@ -18,7 +18,8 @@ import static jakarta.persistence.FetchType.LAZY;
 @Table(name = "market_order_items",
         indexes = {
                 @Index(name = "idx_seller_order", columnList = "seller_id, order_id"),
-                @Index(name = "idx_seller_state", columnList = "seller_id, state")  // 정산 조회용
+                @Index(name = "idx_seller_state", columnList = "seller_id, state"),  // 정산 조회용
+                @Index(name = "idx_order_items_state_delivered", columnList = "state, delivered_at")  // 자동 구매 확정 배치 (V5)
         }
 )
 @Getter

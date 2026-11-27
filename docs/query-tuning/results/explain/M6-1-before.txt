@@ -1,0 +1,14 @@
+# M6-1 (before) db=thock_settlement_db
+select sl1_0.id,sl1_0.order_no,sl1_0.seller_id,sl1_0.payment_amount from sales_log sl1_0 where sl1_0.reconciliation_status='MATCH' and sl1_0.confirmed_at is not null and sl1_0.daily_settlement_id is null
+
+## EXPLAIN
++----+-------------+-------+------------+------+----------------------+----------------------+---------+-------+--------+----------+------------------------------------+
+| id | select_type | table | partitions | type | possible_keys        | key                  | key_len | ref   | rows   | filtered | Extra                              |
++----+-------------+-------+------------+------+----------------------+----------------------+---------+-------+--------+----------+------------------------------------+
+|  1 | SIMPLE      | sl1_0 | NULL       | ref  | idx_sales_log_status | idx_sales_log_status | 1       | const | 495006 |     9.00 | Using index condition; Using where |
++----+-------------+-------+------------+------+----------------------+----------------------+---------+-------+--------+----------+------------------------------------+
+## EXPLAIN ANALYZE
+-> Filter: ((sl1_0.confirmed_at is not null) and (sl1_0.daily_settlement_id is null))  (cost=32235 rows=44551) (actual time=13.5..2109 rows=5455 loops=1)
+    -> Index lookup on sl1_0 using idx_sales_log_status (reconciliation_status='MATCH'), with index condition: (sl1_0.reconciliation_status = 'MATCH')  (cost=32235 rows=495006) (actual time=7.51..2066 rows=970018 loops=1)
+
+## median_ms=1169.956  (server time, runs: 1192.583 1151.833 1585.745 1169.956 1034.91 )

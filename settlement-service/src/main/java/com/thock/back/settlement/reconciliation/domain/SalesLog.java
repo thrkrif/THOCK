@@ -20,7 +20,11 @@ import java.util.Map;
         indexes = {
                 @Index(name = "idx_sales_log_order_no", columnList = "order_no"), // 주문번호 조회용
                 @Index(name = "idx_sales_log_seller", columnList = "seller_id"),    // 판매자별 조회용
-                @Index(name = "idx_sales_log_status", columnList = "reconciliation_status") // 정산 상태별(WAIT/READY) 조회용
+                // [M6] 상태 단일 인덱스(idx_sales_log_status)를 두 복합 인덱스로 대체. 둘 다 상태가 선두라 상태 단독 조회도 커버한다.
+                // 정산 후보: status = 'MATCH' AND daily_settlement_id IS NULL AND confirmed_at IS NOT NULL
+                @Index(name = "idx_sales_log_status_settle", columnList = "reconciliation_status, daily_settlement_id, confirmed_at"),
+                // 대사 잔여건: snapshot_at BETWEEN ? AND ? AND status = 'PENDING'
+                @Index(name = "idx_sales_log_status_snapshot", columnList = "reconciliation_status, snapshot_at")
         }
 )
 @Getter
