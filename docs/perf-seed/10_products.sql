@@ -13,7 +13,7 @@ SELECT created, created, 'KEYBOARD',
        (30 + FLOOR(hp*270)) * 1000,
        FLOOR((30 + FLOOR(hp*270)) * 1000 * 0.9),
        4 + FLOOR(POW(hz,2) * 300),                 -- 판매자 300명, 일부에 몰림
-       ELT(1 + (ht>0.9) + (ht>0.95), 'ON_SALE','SOLDOUT','STOPPED'),
+       ELT(1 + (ht>0.9) + (ht>0.95), 'ON_SALE','SOLD_OUT','STOPPED'),
        FLOOR(hk*500),
        FLOOR(POW(hv,3)*100000),
        0
