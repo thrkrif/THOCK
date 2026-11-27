@@ -1,0 +1,15 @@
+# H3-1 (before) db=thock_product_db
+select p1_0.id,p1_0.name,p1_0.price,p1_0.sale_price,p1_0.seller_id from products p1_0 where p1_0.name like '%Keychron%' order by p1_0.id desc limit 0,12
+
+## EXPLAIN
++----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+----------------------------------+
+| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref  | rows | filtered | Extra                            |
++----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+----------------------------------+
+|  1 | SIMPLE      | p1_0  | NULL       | index | NULL          | PRIMARY | 8       | NULL |   12 |    11.11 | Using where; Backward index scan |
++----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+----------------------------------+
+## EXPLAIN ANALYZE
+-> Limit: 12 row(s)  (cost=1.48 rows=1.33) (actual time=3.22..3.27 rows=12 loops=1)
+    -> Filter: (p1_0.`name` like '%Keychron%')  (cost=1.48 rows=1.33) (actual time=3.22..3.26 rows=12 loops=1)
+        -> Index scan on p1_0 using PRIMARY (reverse)  (cost=1.48 rows=12) (actual time=2.88..3.23 rows=159 loops=1)
+
+## median_ms=0.133  (server time, runs: 0.129 0.128 0.133 0.143 0.873 )

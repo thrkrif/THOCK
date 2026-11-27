@@ -1,0 +1,15 @@
+# M8-1 (after) db=thock_product_db
+select pr1_0.product_id,avg(pr1_0.rating),count(pr1_0.id) from product_reviews pr1_0 where pr1_0.product_id in (624839,624840,624841,624842,624843,624844,624845,624846,624847,624848,624849,624850) group by pr1_0.product_id
+
+## EXPLAIN
++----+-------------+-------+------------+-------+------------------------------------------------------------------------+------------------------------------+---------+------+-------+----------+--------------------------+
+| id | select_type | table | partitions | type  | possible_keys                                                          | key                                | key_len | ref  | rows  | filtered | Extra                    |
++----+-------------+-------+------------+-------+------------------------------------------------------------------------+------------------------------------+---------+------+-------+----------+--------------------------+
+|  1 | SIMPLE      | pr1_0 | NULL       | range | idx_product_reviews_product_created,idx_product_reviews_product_rating | idx_product_reviews_product_rating | 8       | NULL | 36989 |   100.00 | Using where; Using index |
++----+-------------+-------+------------+-------+------------------------------------------------------------------------+------------------------------------+---------+------+-------+----------+--------------------------+
+## EXPLAIN ANALYZE
+-> Group aggregate: avg(pr1_0.rating), count(pr1_0.id)  (cost=11179 rows=36989) (actual time=0.301..7.03 rows=12 loops=1)
+    -> Filter: (pr1_0.product_id in (624839,624840,624841,624842,624843,624844,624845,624846,624847,624848,624849,624850))  (cost=7480 rows=36989) (actual time=0.0988..5.36 rows=26767 loops=1)
+        -> Covering index range scan on pr1_0 using idx_product_reviews_product_rating over (product_id = 624839) OR (product_id = 624840) OR (10 more)  (cost=7480 rows=36989) (actual time=0.0974..3.87 rows=26767 loops=1)
+
+## median_ms=4.318  (server time, runs: 4.318 4.288 4.799 4.192 4.403 )

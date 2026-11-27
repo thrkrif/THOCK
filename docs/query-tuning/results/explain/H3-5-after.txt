@@ -1,0 +1,13 @@
+# H3-5 (after) db=thock_product_db
+select 'list skipped: count=0'
+
+## EXPLAIN
++----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+----------------+
+| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra          |
++----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+----------------+
+|  1 | SIMPLE      | NULL  | NULL       | NULL | NULL          | NULL | NULL    | NULL | NULL |     NULL | No tables used |
++----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+----------------+
+## EXPLAIN ANALYZE
+-> Rows fetched before execution  (cost=0..0 rows=1) (actual time=42e-6..42e-6 rows=1 loops=1)
+
+## median_ms=0.017  (server time, runs: 0.015 0.023 0.017 0.03 0.016 )

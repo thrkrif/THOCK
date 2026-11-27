@@ -12,7 +12,6 @@ vis=$([ "$mode" = before ] && echo INVISIBLE || echo VISIBLE)
 INDEXES=(
   "thock_market_db.market_orders idx_orders_state_request_payment"
   "thock_market_db.market_orders idx_orders_state_cancel_date"
-  "thock_market_db.market_orders idx_orders_buyer_created"
   "thock_market_db.market_order_items idx_order_items_state_delivered"
   "thock_market_db.market_shipments idx_shipments_seller_created"
   "thock_payment_db.payment_payments idx_payment_order_id"

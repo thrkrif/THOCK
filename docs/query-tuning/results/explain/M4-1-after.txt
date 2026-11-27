@@ -1,0 +1,20 @@
+# M4-1 (after) db=thock_market_db
+select s1_0.id,s1_0.seller_id,s1_0.status,oi1_0.id,oi1_0.product_name,o1_0.id,o1_0.order_number from market_shipments s1_0 join market_order_items oi1_0 on oi1_0.id=s1_0.order_item_id join market_orders o1_0 on o1_0.id=oi1_0.order_id where s1_0.seller_id=100 order by s1_0.created_at desc
+
+## EXPLAIN
++----+-------------+-------+------------+--------+------------------------------------------------------------+------------------------------+---------+------------------------------------+------+----------+---------------------+
+| id | select_type | table | partitions | type   | possible_keys                                              | key                          | key_len | ref                                | rows | filtered | Extra               |
++----+-------------+-------+------------+--------+------------------------------------------------------------+------------------------------+---------+------------------------------------+------+----------+---------------------+
+|  1 | SIMPLE      | s1_0  | NULL       | ref    | uk_market_shipment_order_item,idx_shipments_seller_created | idx_shipments_seller_created | 8       | const                              | 2758 |   100.00 | Backward index scan |
+|  1 | SIMPLE      | oi1_0 | NULL       | eq_ref | PRIMARY,FKt0mkyvksep8vw65b58987dl2l                        | PRIMARY                      | 8       | thock_market_db.s1_0.order_item_id |    1 |   100.00 | Using where         |
+|  1 | SIMPLE      | o1_0  | NULL       | eq_ref | PRIMARY                                                    | PRIMARY                      | 8       | thock_market_db.oi1_0.order_id     |    1 |   100.00 | NULL                |
++----+-------------+-------+------------+--------+------------------------------------------------------------+------------------------------+---------+------------------------------------+------+----------+---------------------+
+## EXPLAIN ANALYZE
+-> Nested loop inner join  (cost=8639 rows=2758) (actual time=14.9..248 rows=2758 loops=1)
+    -> Nested loop inner join  (cost=5723 rows=2758) (actual time=14.9..195 rows=2758 loops=1)
+        -> Index lookup on s1_0 using idx_shipments_seller_created (seller_id=100) (reverse)  (cost=3034 rows=2758) (actual time=14.8..155 rows=2758 loops=1)
+        -> Filter: (oi1_0.order_id is not null)  (cost=0.875 rows=1) (actual time=0.0142..0.0143 rows=1 loops=2758)
+            -> Single-row index lookup on oi1_0 using PRIMARY (id=s1_0.order_item_id)  (cost=0.875 rows=1) (actual time=0.014..0.0141 rows=1 loops=2758)
+    -> Single-row index lookup on o1_0 using PRIMARY (id=oi1_0.order_id)  (cost=0.957 rows=1) (actual time=0.0191..0.0191 rows=1 loops=2758)
+
+## median_ms=71.936  (server time, runs: 57.29 71.936 69.879 84.85 85.047 )

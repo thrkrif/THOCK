@@ -1,0 +1,14 @@
+# M5-1 (after) db=thock_market_db
+select oe1_0.status,count(oe1_0.id) from outbox_event oe1_0 group by oe1_0.status
+
+## EXPLAIN
++----+-------------+-------+------------+-------+---------------------------+---------------------------+---------+------+--------+----------+-------------+
+| id | select_type | table | partitions | type  | possible_keys             | key                       | key_len | ref  | rows   | filtered | Extra       |
++----+-------------+-------+------------+-------+---------------------------+---------------------------+---------+------+--------+----------+-------------+
+|  1 | SIMPLE      | oe1_0 | NULL       | index | idx_outbox_status_created | idx_outbox_status_created | 9       | NULL | 498936 |   100.00 | Using index |
++----+-------------+-------+------------+-------+---------------------------+---------------------------+---------+------+--------+----------+-------------+
+## EXPLAIN ANALYZE
+-> Group aggregate: count(oe1_0.id)  (cost=107926 rows=1) (actual time=1.59..136 rows=2 loops=1)
+    -> Covering index scan on oe1_0 using idx_outbox_status_created  (cost=58033 rows=498936) (actual time=0.652..98.2 rows=516389 loops=1)
+
+## median_ms=68.905  (server time, runs: 69.576 70.124 66.089 64.042 68.905 )

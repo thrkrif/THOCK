@@ -1,0 +1,15 @@
+# H1-2 (before) db=thock_market_db
+select o1_0.state,count(o1_0.id) from market_orders o1_0 group by o1_0.state
+
+## EXPLAIN
++----+-------------+-------+------------+------+---------------+------+---------+------+---------+----------+-----------------+
+| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra           |
++----+-------------+-------+------------+------+---------------+------+---------+------+---------+----------+-----------------+
+|  1 | SIMPLE      | o1_0  | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1025869 |   100.00 | Using temporary |
++----+-------------+-------+------------+------+---------------+------+---------+------+---------+----------+-----------------+
+## EXPLAIN ANALYZE
+-> Table scan on <temporary>  (actual time=675..675 rows=9 loops=1)
+    -> Aggregate using temporary table  (actual time=675..675 rows=9 loops=1)
+        -> Table scan on o1_0  (cost=113562 rows=1.03e+6) (actual time=1.06..317 rows=1.03e+6 loops=1)
+
+## median_ms=534.829  (server time, runs: 582.119 522.765 530.052 534.829 537.434 )

@@ -1,0 +1,3 @@
+[optimizer choice] ## median_ms=506.231 |  ref    idx_orders_state_request_payment   254480   Using index condition; Using where 
+[force index (idx_orders_state_cancel_date)] ## median_ms=507.009 |  range   idx_orders_state_cancel_date      1   Using index condition 
+[ignore index (idx_orders_state_request_payment, idx_orders_state_cancel_date)] ## median_ms=397.674 |  ALL    NULL   1025869   Using where 

@@ -1,0 +1,18 @@
+# M2-1 (after) db=thock_market_db
+select distinct o1_0.id,o1_0.buyer_id,o1_0.cancel_date,o1_0.created_at,o1_0.order_number,o1_0.state,o1_0.request_payment_date,o1_0.total_price,i1_0.id,i1_0.product_name,i1_0.state from market_orders o1_0 left join market_order_items i1_0 on o1_0.id=i1_0.order_id where o1_0.buyer_id=100 order by o1_0.created_at desc
+
+## EXPLAIN
++----+-------------+-------+------------+------+-------------------------------------------------------------+-----------------------------+---------+-------------------------+------+----------+--------------------------------------+
+| id | select_type | table | partitions | type | possible_keys                                               | key                         | key_len | ref                     | rows | filtered | Extra                                |
++----+-------------+-------+------------+------+-------------------------------------------------------------+-----------------------------+---------+-------------------------+------+----------+--------------------------------------+
+|  1 | SIMPLE      | o1_0  | NULL       | ref  | uk_orders_buyer_id_idempotency_key,idx_orders_buyer_created | idx_orders_buyer_created    | 8       | const                   |  475 |   100.00 | Backward index scan; Using temporary |
+|  1 | SIMPLE      | i1_0  | NULL       | ref  | FKt0mkyvksep8vw65b58987dl2l                                 | FKt0mkyvksep8vw65b58987dl2l | 9       | thock_market_db.o1_0.id |    1 |   100.00 | NULL                                 |
++----+-------------+-------+------------+------+-------------------------------------------------------------+-----------------------------+---------+-------------------------+------+----------+--------------------------------------+
+## EXPLAIN ANALYZE
+-> Table scan on <temporary>  (cost=1225..1235 rows=604) (actual time=113..113 rows=636 loops=1)
+    -> Temporary table with deduplication  (cost=1225..1225 rows=604) (actual time=113..113 rows=636 loops=1)
+        -> Nested loop left join  (cost=1165 rows=604) (actual time=3.47..108 rows=636 loops=1)
+            -> Index lookup on o1_0 using idx_orders_buyer_created (buyer_id=100) (reverse)  (cost=501 rows=475) (actual time=1.9..12.7 rows=475 loops=1)
+            -> Index lookup on i1_0 using FKt0mkyvksep8vw65b58987dl2l (order_id=o1_0.id)  (cost=1.27 rows=1.27) (actual time=0.2..0.2 rows=1.18 loops=475)
+
+## median_ms=3.098  (server time, runs: 2.217 3.098 9.628 2.81 4.212 )

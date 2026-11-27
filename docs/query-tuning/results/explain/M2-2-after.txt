@@ -1,0 +1,18 @@
+# M2-2 (after) db=thock_market_db
+select distinct o1_0.id,o1_0.buyer_id,o1_0.cancel_date,o1_0.created_at,o1_0.order_number,o1_0.state,o1_0.request_payment_date,o1_0.total_price,i1_0.id,i1_0.product_name,i1_0.state from market_orders o1_0 left join market_order_items i1_0 on o1_0.id=i1_0.order_id where o1_0.buyer_id=4 order by o1_0.created_at desc
+
+## EXPLAIN
++----+-------------+-------+------------+-------+-------------------------------------------------------------+-----------------------------+---------+-------------------------+-------+----------+------------------------------------------------------------------------+
+| id | select_type | table | partitions | type  | possible_keys                                               | key                         | key_len | ref                     | rows  | filtered | Extra                                                                  |
++----+-------------+-------+------------+-------+-------------------------------------------------------------+-----------------------------+---------+-------------------------+-------+----------+------------------------------------------------------------------------+
+|  1 | SIMPLE      | o1_0  | NULL       | range | uk_orders_buyer_id_idempotency_key,idx_orders_buyer_created | idx_orders_buyer_created    | 8       | NULL                    | 17560 |   100.00 | Using index condition; Backward index scan; Using MRR; Using temporary |
+|  1 | SIMPLE      | i1_0  | NULL       | ref   | FKt0mkyvksep8vw65b58987dl2l                                 | FKt0mkyvksep8vw65b58987dl2l | 9       | thock_market_db.o1_0.id |     1 |   100.00 | NULL                                                                   |
++----+-------------+-------+------------+-------+-------------------------------------------------------------+-----------------------------+---------+-------------------------+-------+----------+------------------------------------------------------------------------+
+## EXPLAIN ANALYZE
+-> Table scan on <temporary>  (cost=43818..44100 rows=22323) (actual time=696..697 rows=12263 loops=1)
+    -> Temporary table with deduplication  (cost=43818..43818 rows=22323) (actual time=696..696 rows=12263 loops=1)
+        -> Nested loop left join  (cost=41586 rows=22323) (actual time=2.63..652 rows=12263 loops=1)
+            -> Index range scan on o1_0 using idx_orders_buyer_created over (buyer_id = 4) (reverse), with index condition: (o1_0.buyer_id = 4)  (cost=17563 rows=17560) (actual time=2.26..185 rows=9213 loops=1)
+            -> Index lookup on i1_0 using FKt0mkyvksep8vw65b58987dl2l (order_id=o1_0.id)  (cost=1.24 rows=1.27) (actual time=0.0501..0.0504 rows=1.21 loops=9213)
+
+## median_ms=221.957  (server time, runs: 249.034 221.957 220.888 224.68 220.428 )

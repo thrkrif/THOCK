@@ -1,0 +1,29 @@
+H1-1  ## median_ms=325.156   type=ALL key=NULL rows=1025869 Extra=Using where
+H1-2  ## median_ms=534.829   type=ALL key=NULL rows=1025869 Extra=Using temporary
+H1-3  ## median_ms=402.282   type=ALL key=NULL rows=1025869 Extra=Using where
+H1-4  ## median_ms=817.437   type=ALL key=NULL rows=1025869 Extra=Using where
+H1-5  ## median_ms=413.162   type=ALL key=NULL rows=1025869 Extra=Using where
+H2-1  ## median_ms=295.723   type=ALL key=NULL rows=1023760 Extra=Using where
+H3-1  ## median_ms=0.133     type=index key=PRIMARY rows=12 Extra=Using where; Backward index scan
+H3-2  ## median_ms=211.088   type=ALL key=NULL rows=485463 Extra=Using where
+H3-3  ## median_ms=339.423   type=index key=PRIMARY rows=12 Extra=Using where; Backward index scan
+H3-4  ## median_ms=205.295   type=ALL key=NULL rows=485463 Extra=Using where
+H3-5  ## median_ms=269.002   type=index key=PRIMARY rows=12 Extra=Using where; Backward index scan
+H3-6  ## median_ms=212.587   type=ALL key=NULL rows=485463 Extra=Using where
+H4-1  ## median_ms=0.732     type=index key=PRIMARY rows=10 Extra=Using where; Backward index scan
+H4-2  ## median_ms=137.761   type=ALL key=NULL rows=485463 Extra=Using where
+H4-3  ## median_ms=134.119   type=ALL key=NULL rows=485463 Extra=Using where
+M1-1  ## median_ms=241.687   type=ALL key=NULL rows=485463 Extra=Using where; Using filesort
+M1-2  ## median_ms=2.767     type=range key=idx_products_category_id rows=242731 Extra=Using index condition; Backward index scan
+M1-3  ## median_ms=74.461    type=ref key=idx_products_category_id rows=242731 Extra=Using where; Using index
+M2-1  ## median_ms=3.873     type=ref key=uk_orders_buyer_id_idempotency_key rows=475 Extra=Using temporary; Using filesort
+M2-2  ## median_ms=158.786   type=ref key=uk_orders_buyer_id_idempotency_key rows=17204 Extra=Using temporary; Using filesort
+M3-1  ## median_ms=379.337   type=ALL key=NULL rows=1190732 Extra=Using where
+M4-1  ## median_ms=298.495   type=ALL key=NULL rows=933759 Extra=Using where; Using filesort
+M5-1  ## median_ms=72.369    type=ref key=idx_outbox_status_created rows=249468 Extra=Using where; Using index
+M5-2  ## median_ms=2261.415  type=ref key=idx_outbox_status_created rows=249468 Extra=Using index condition; Using where
+M5-3  ## median_ms=4.616     type=ref key=idx_outbox_status_created rows=1906 Extra=Using index condition; Using where
+M6-1  ## median_ms=1169.956  type=ref key=idx_sales_log_status rows=495006 Extra=Using index condition; Using where
+M6-2  ## median_ms=65.798    type=ref key=idx_sales_log_status rows=38902 Extra=Using index condition; Using where
+M7-1  ## median_ms=0.065     type=ref key=idx_sales_log_order_no rows=1 Extra=Using where
+M8-1  ## median_ms=217.036   type=range key=idx_product_reviews_product_created rows=37693 Extra=Using index condition

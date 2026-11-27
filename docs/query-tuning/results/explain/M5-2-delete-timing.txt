@@ -1,0 +1,2 @@
+[status='SENT' and sent_at<now()-interval 7 day] delete_ms rows: 3775.1	80911 7021.5	80904 9688.3	80897 
+[status='SENT' and created_at<now()-interval 7 day and sent_at<now()-interval 7 day] delete_ms rows: 5297.3	80935 5551.2	80928 7733.2	80923 

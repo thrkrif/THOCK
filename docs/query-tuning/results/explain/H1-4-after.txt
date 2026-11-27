@@ -1,0 +1,14 @@
+# H1-4 (after) db=thock_market_db
+select o1_0.id,o1_0.buyer_id,o1_0.cancel_date,o1_0.created_at,o1_0.order_number,o1_0.state,o1_0.request_payment_date,o1_0.total_price from market_orders o1_0 where o1_0.state='CANCELLED' and o1_0.cancel_date<now()-interval 30 day
+
+## EXPLAIN
++----+-------------+-------+------------+------+---------------------------------------------------------------+----------------------------------+---------+-------+--------+----------+------------------------------------+
+| id | select_type | table | partitions | type | possible_keys                                                 | key                              | key_len | ref   | rows   | filtered | Extra                              |
++----+-------------+-------+------------+------+---------------------------------------------------------------+----------------------------------+---------+-------+--------+----------+------------------------------------+
+|  1 | SIMPLE      | o1_0  | NULL       | ref  | idx_orders_state_request_payment,idx_orders_state_cancel_date | idx_orders_state_request_payment | 1       | const | 254480 |    33.33 | Using index condition; Using where |
++----+-------------+-------+------------+------+---------------------------------------------------------------+----------------------------------+---------+-------+--------+----------+------------------------------------+
+## EXPLAIN ANALYZE
+-> Filter: (o1_0.cancel_date < <cache>((now() - interval 30 day)))  (cost=48204 rows=84818) (actual time=11.1..1093 rows=118090 loops=1)
+    -> Index lookup on o1_0 using idx_orders_state_request_payment (state='CANCELLED'), with index condition: (o1_0.state = 'CANCELLED')  (cost=48204 rows=254480) (actual time=11.1..1086 rows=118090 loops=1)
+
+## median_ms=551.178  (server time, runs: 551.178 535.517 581.72 547.766 610.89 )

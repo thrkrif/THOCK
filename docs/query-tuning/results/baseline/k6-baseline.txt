@@ -1,0 +1,13 @@
+# k6 baseline
+product_list               count=  220  avg=   200.9ms  med=   166.9ms  p95=   431.0ms  max=   858.2ms
+review_summaries           count=  220  avg=   484.8ms  med=   401.2ms  p95=  1153.4ms  max=  1618.2ms
+product_list_sort_price    count=   78  avg=   792.1ms  med=   817.1ms  p95=  1152.5ms  max=  1186.5ms
+product_list_size_2000     count=  138  avg=   144.8ms  med=   128.1ms  p95=   224.9ms  max=   431.4ms
+search_common              count=   97  avg=   361.7ms  med=   342.1ms  p95=   531.4ms  max=   673.6ms
+search_rare                count=   96  avg=   644.3ms  med=   624.8ms  p95=   820.9ms  max=  1013.2ms
+search_none                count=   62  avg=   622.2ms  med=   606.6ms  p95=   821.8ms  max=   897.0ms
+my_products_mid            count=  229  avg=   206.8ms  med=   182.1ms  p95=   322.7ms  max=   760.1ms
+my_products_heavy          count=  200  avg=   213.1ms  med=   183.1ms  p95=   326.9ms  max=  1061.1ms
+my_orders                  count=  925  avg=    64.7ms  med=    37.7ms  p95=   210.1ms  max=   798.5ms
+seller_shipments           count=   41  avg=   736.9ms  med=   660.5ms  p95=   954.7ms  max=  2463.1ms
+http_req_failed=0.00%

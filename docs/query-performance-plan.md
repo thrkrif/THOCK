@@ -1,5 +1,7 @@
 # 쿼리 성능 점검 작업 계획
 
+> 작업 전에 세운 계획입니다. 실제 진행 과정과 결과는 [query-tuning/README.md](query-tuning/README.md), 명령어는 [query-tuning/commands.md](query-tuning/commands.md) 참고.
+
 정적 분석 결과([query-analysis.md](query-analysis.md))의 인덱스 후보를 더미 데이터 + EXPLAIN / digest 통계 / k6 로 검증하는 계획.
 
 ## 역할 분담
@@ -27,7 +29,7 @@
 
 ## 2. 측정 준비 (직접)
 
-항목별 상세 절차와 `EXPLAIN` 읽는 법은 [query-measurement-guide.md](query-measurement-guide.md) 참고.
+항목별 상세 절차와 `EXPLAIN` 읽는 법은 [query-tuning/commands.md](query-tuning/commands.md) 참고.
 
 1. 슬로우 로그 설정 (선택): `SET GLOBAL slow_query_log=ON; SET GLOBAL long_query_time=0.1;`
 2. digest 통계 초기화:
@@ -74,7 +76,7 @@ LIMIT 20;
 
 쿼리별 전/후: `rows_examined`, `avg_ms`, `total_sec`, k6 p95 응답시간 / 에러율.
 
-측정한 결과는 [query-analysis.md의 결과 섹션](query-analysis.md#결과)에 항목별로 기록합니다.
+측정한 결과는 [query-tuning/README.md](query-tuning/README.md)에 항목별로 기록합니다.
 
 ## 6. 적용 시 주의
 

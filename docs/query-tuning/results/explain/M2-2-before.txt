@@ -1,0 +1,19 @@
+# M2-2 (before) db=thock_market_db
+select distinct o1_0.id,o1_0.buyer_id,o1_0.cancel_date,o1_0.created_at,o1_0.order_number,o1_0.state,o1_0.request_payment_date,o1_0.total_price,i1_0.id,i1_0.product_name,i1_0.state from market_orders o1_0 left join market_order_items i1_0 on o1_0.id=i1_0.order_id where o1_0.buyer_id=4 order by o1_0.created_at desc
+
+## EXPLAIN
++----+-------------+-------+------------+------+------------------------------------+------------------------------------+---------+-------------------------+-------+----------+---------------------------------+
+| id | select_type | table | partitions | type | possible_keys                      | key                                | key_len | ref                     | rows  | filtered | Extra                           |
++----+-------------+-------+------------+------+------------------------------------+------------------------------------+---------+-------------------------+-------+----------+---------------------------------+
+|  1 | SIMPLE      | o1_0  | NULL       | ref  | uk_orders_buyer_id_idempotency_key | uk_orders_buyer_id_idempotency_key | 8       | const                   | 17204 |   100.00 | Using temporary; Using filesort |
+|  1 | SIMPLE      | i1_0  | NULL       | ref  | FKt0mkyvksep8vw65b58987dl2l        | FKt0mkyvksep8vw65b58987dl2l        | 9       | thock_market_db.o1_0.id |     1 |   100.00 | NULL                            |
++----+-------------+-------+------------+------+------------------------------------+------------------------------------+---------+-------------------------+-------+----------+---------------------------------+
+## EXPLAIN ANALYZE
+-> Sort: o1_0.created_at DESC  (actual time=2658..2659 rows=12263 loops=1)
+    -> Table scan on <temporary>  (cost=42902..43178 rows=21871) (actual time=2629..2632 rows=12263 loops=1)
+        -> Temporary table with deduplication  (cost=42902..42902 rows=21871) (actual time=2629..2629 rows=12263 loops=1)
+            -> Nested loop left join  (cost=40715 rows=21871) (actual time=0.872..2520 rows=12263 loops=1)
+                -> Index lookup on o1_0 using uk_orders_buyer_id_idempotency_key (buyer_id=4)  (cost=17170 rows=17204) (actual time=0.8..235 rows=9213 loops=1)
+                -> Index lookup on i1_0 using FKt0mkyvksep8vw65b58987dl2l (order_id=o1_0.id)  (cost=1.24 rows=1.27) (actual time=0.246..0.247 rows=1.21 loops=9213)
+
+## median_ms=158.786  (server time, runs: 143.721 139.781 158.786 236.936 234.225 )

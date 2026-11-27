@@ -1,0 +1,19 @@
+keyword          like_cnt  match_cnt  same
+Keychron            62522      62522  O
+Razer               62480      62480  O
+Varmilo             62538      62538  O
+Royal Kludge        62458      62458  O
+G Pro               83377          0  X
+Q1                  83325      83325  O
+TKL                208310     208310  O
+75%                139881     139881  O
+M123456                 1          1  O
+M5                  11112      11112  O
+Cherry                  0          0  O
+Red TKL             99941      99941  O
+Mini                83340      83340  O
+Silent              99982      99982  O
+Ducky               62481      62481  O
+ro                 254731     254731  O
+Akko                62518      62518  O
+Logitech G          20855          0  X

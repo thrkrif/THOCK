@@ -1,0 +1,13 @@
+# M3-1 (after) db=thock_market_db
+select oi1_0.id,oi1_0.order_id,oi1_0.state,oi1_0.delivered_at from market_order_items oi1_0 where oi1_0.state='DELIVERED' and oi1_0.delivered_at<now()-interval 7 day
+
+## EXPLAIN
++----+-------------+-------+------------+-------+---------------------------------+---------------------------------+---------+------+-------+----------+----------------------------------+
+| id | select_type | table | partitions | type  | possible_keys                   | key                             | key_len | ref  | rows  | filtered | Extra                            |
++----+-------------+-------+------------+-------+---------------------------------+---------------------------------+---------+------+-------+----------+----------------------------------+
+|  1 | SIMPLE      | oi1_0 | NULL       | range | idx_order_items_state_delivered | idx_order_items_state_delivered | 10      | NULL | 71470 |   100.00 | Using index condition; Using MRR |
++----+-------------+-------+------------+-------+---------------------------------+---------------------------------+---------+------+-------+----------+----------------------------------+
+## EXPLAIN ANALYZE
+-> Index range scan on oi1_0 using idx_order_items_state_delivered over (state = 'DELIVERED' AND NULL < delivered_at < '2026-11-20 17:36:10.000000'), with index condition: ((oi1_0.state = 'DELIVERED') and (oi1_0.delivered_at < <cache>((now() - interval 7 day))))  (cost=69735 rows=71470) (actual time=26.5..387 rows=36031 loops=1)
+
+## median_ms=163.308  (server time, runs: 163.308 170.863 206.667 154.043 150.973 )

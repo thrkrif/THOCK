@@ -1,6 +1,7 @@
 # 쿼리 성능 정적 분석 결과
 
-코드와 DDL만 읽고 내린 추론입니다. 서버 실행이나 EXPLAIN으로 확인한 것은 없습니다. 검증 계획은 [query-performance-plan.md](query-performance-plan.md) 참고.
+코드와 DDL만 읽고 내린 추론입니다(작성 당시). 실제로 서버를 띄워 슬로우 로그와 EXPLAIN 으로 검증하고 개선한 결과는 [query-tuning/README.md](query-tuning/README.md)에 있습니다.
+추론과 실측이 달랐던 항목(H3, M2, M5)은 각 문서에 이유를 적었습니다.
 
 ## 전제
 
@@ -17,22 +18,22 @@
 
 **높음**
 
-- [ ] H1 `market_orders.state` 인덱스 + 메트릭 `GROUP BY` 통합 (진행 중: 쿼리 통합 커밋, 인덱스는 로컬 DB에만 적용, 마이그레이션 남음. [결과](#h1-결과))
-- [ ] H2 `payment_payments.order_id` 인덱스
-- [ ] H3 상품명 검색 `LIKE '%kw%'` 개선
-- [ ] H4 `products.seller_id` 인덱스
+- [x] H1 `market_orders.state` 인덱스 + 메트릭 `GROUP BY` 통합 → [H1](query-tuning/H1-order-state.md)
+- [x] H2 `payment_payments.order_id` 인덱스 (UNIQUE 는 중복 데이터 발견으로 보류) → [H2](query-tuning/H2-payment-order-id.md)
+- [x] H3 상품명 검색 `LIKE '%kw%'` 개선 (FULLTEXT 는 측정 후 기각, 이름 인덱스 + 결과 건수별 조회로 변경) → [H3](query-tuning/H3-product-search.md)
+- [x] H4 `products.seller_id` 인덱스 → [H4](query-tuning/H4-seller-products.md)
 
 **중간**
 
-- [ ] M1 상품 목록 페이징/정렬 제한
-- [ ] M2 내 주문 목록 페이징 + `(buyer_id, created_at)` 인덱스
-- [ ] M3 `market_order_items (state, delivered_at)` 인덱스
-- [ ] M4 `market_shipments (seller_id, created_at)` 인덱스 + 페이징
-- [ ] M5 Outbox 쿼리 정리 (`(status, sent_at)` 인덱스, `DEAD` 상태, count 통합)
-- [ ] M6 `sales_log` 정산 후보 조회 인덱스
-- [ ] M7 `RunReconciliationUseCase` N+1 제거
-- [ ] M8 리뷰 요약 집계 커버링 인덱스
-- [ ] M9 무제한 목록 조회 페이징
+- [x] M1 상품 목록 페이징/정렬 제한 (count 비용은 남음) → [M1](query-tuning/M1-product-paging.md)
+- [ ] M2 내 주문 목록 페이징 + `(buyer_id, created_at)` 인덱스 — 인덱스는 측정 결과 효과 없어 미적용, 페이징은 응답 형식 변경이라 보류 → [M2](query-tuning/M2-my-orders.md)
+- [x] M3 `market_order_items (state, delivered_at)` 인덱스 → [M3](query-tuning/M3-M4-orders-batch-and-shipments.md)
+- [x] M4 `market_shipments (seller_id, created_at)` 인덱스 + fetch join (페이징은 보류) → [M4](query-tuning/M3-M4-orders-batch-and-shipments.md)
+- [x] M5 Outbox 쿼리 정리 — count 통합만 적용. 정리 DELETE 변경은 효과 없어 되돌림, `DEAD` 상태는 보류 → [M5](query-tuning/M5-outbox.md)
+- [x] M6 `sales_log` 정산 후보 조회 인덱스 → [M6](query-tuning/M6-M7-settlement.md)
+- [x] M7 `RunReconciliationUseCase` N+1 제거 → [M7](query-tuning/M6-M7-settlement.md)
+- [x] M8 리뷰 요약 집계 커버링 인덱스 → [M8](query-tuning/M8-review-summary.md)
+- [ ] M9 무제한 목록 조회 페이징 — 응답 형식 변경이라 보류 → [deferred](query-tuning/deferred.md)
 
 **낮음**
 
@@ -77,7 +78,7 @@
 - **`RefreshToken` 일괄 폐기**: `revokeAllByMemberId`는 `(member_id)`만 탐. `(member_id, revoked_at)`이면 미폐기 토큰만 좁힘
 - **쿠폰 목록과 취소 이력**: 테이블이 작고 정렬 대상이 적어 지금은 문제 없음
 - **`PESSIMISTIC_WRITE` + `join fetch`**: `MemberCoupon`, `Shipment`, `OrderItem`에서 `FOR UPDATE`가 조인된 두 테이블의 행을 모두 잠글 수 있음. 쿠폰 행 경합이 생기는지는 실제 생성 SQL로 확인 필요
-- **전역 설정**: `open-in-view`가 기본값(true)이고 market의 Hikari 풀은 10개라 요청 내내 커넥션을 잡고 있음. `GenerationType.IDENTITY`라 JDBC 배치 insert도 안 됨(`saveAll`이 건건이 insert)
+- **전역 설정**: `open-in-view`가 기본값(true)이고 market의 Hikari 풀은 16개(`maximum-pool-size: 16`, 처음 분석에서 10개로 잘못 적음)라 요청 내내 커넥션을 잡고 있음. `GenerationType.IDENTITY`라 JDBC 배치 insert도 안 됨(`saveAll`이 건건이 insert)
 
 ## 인덱스 적용 시 주의
 
@@ -88,50 +89,4 @@
 
 ## 결과
 
-항목을 처리하면 여기에 무엇을 바꿨고 얼마나 빨라졌는지 기록합니다. 측정 방법은 [query-measurement-guide.md](query-measurement-guide.md) 참고.
-
-### H1 결과
-
-**측정 조건**: 2026-11-17, 로컬 MySQL 8.0.45, `market_orders` 약 103만 행(더미 데이터). 앱을 끈 상태에서 `EXPLAIN ANALYZE`를 워밍업 1회 후 5회 실행해 중앙값을 기록했습니다.
-
-**바꾼 것**
-
-| 변경 | 상태 |
-|---|---|
-| `MarketMetricsCollector`의 상태별 count 11회를 `GROUP BY state` 1회로 통합 | 커밋 `ea08151` |
-| 인덱스 `idx_orders_state_request_payment (state, request_payment_date)`, `idx_orders_state_cancel_date (state, cancel_date)` | 로컬 DB에만 적용. Flyway V4 미작성 |
-| 메트릭 수집 주기 10초 → 60초 | 미적용 (`market.metrics.collect-interval-ms: 10000`) |
-
-**메트릭 수집 1회당 주문 집계 시간**
-
-| | 인덱스 없음 | 인덱스 있음 |
-|---|---|---|
-| 상태별 count 11회 (기존) | 3,404ms (11회 모두 풀스캔) | 245ms |
-| `GROUP BY` 1회 (변경 후) | 567ms (풀스캔 + 임시 테이블) | **188ms** (커버링 인덱스 스캔) |
-
-기존 대비 3,404ms → 188ms로 약 18배 빨라졌습니다. 쿼리 통합으로 약 6배, 인덱스로 다시 약 3배입니다.
-
-**실행 계획 변화 (`GROUP BY` 쿼리)**
-
-| | `type` | `key` | `Extra` |
-|---|---|---|---|
-| 인덱스 없음 | `ALL` | `NULL` | `Using temporary` |
-| 인덱스 있음 | `index` | `idx_orders_state_request_payment` | `Using index` |
-
-인덱스가 생겨도 `GROUP BY`는 여전히 103만 건을 모두 읽습니다. 다만 테이블 대신 크기가 훨씬 작은 인덱스만 읽고(커버링), 인덱스가 이미 `state` 순으로 정렬되어 있어 임시 테이블 없이 바로 묶습니다.
-
-**같은 인덱스로 함께 빨라진 스케줄러 쿼리**
-
-| 쿼리 | 인덱스 없음 | 인덱스 있음 |
-|---|---|---|
-| `OrderTimeoutScheduler` (`state = PENDING_PAYMENT and request_payment_date < ?`, 60초마다) | 301ms (풀스캔) | 0.01ms |
-| `OrderCleanupScheduler` (`state = CANCELLED and cancel_date < ?`, 매일 3시) | 312ms (풀스캔) | 28ms (범위 스캔) |
-
-- 측정 시점에 `PENDING_PAYMENT` 행이 0건이었습니다. 앱이 돌면서 타임아웃 스케줄러가 이미 취소 처리한 것으로 보입니다. 그래서 인덱스가 있으면 즉시 끝나지만, 인덱스가 없으면 0건을 찾으려고 테이블 전체를 읽습니다.
-- 타임아웃 쿼리는 옵티마이저가 `(state, cancel_date)` 인덱스를 골랐습니다. 두 인덱스 모두 `state`가 선두라 어느 쪽이든 `state` 조건으로 좁혀집니다.
-
-**남은 일**
-
-- Flyway `V4` 마이그레이션 작성, `Order` 엔티티 `@Table(indexes=…)` 추가
-- 10초 → 60초 변경 여부 결정. 같은 `collect()`에서 Outbox 상태 count(4회)와 Kafka lag 메트릭도 함께 수집하므로, 주기를 바꾸면 이 값들도 60초마다 갱신됩니다. Prometheus는 10초마다 수집하므로 그래프에서는 같은 값이 6번 찍힙니다.
-- 인덱스 2개의 쓰기 비용 확인: 주문 상태가 바뀔 때마다 두 인덱스가 모두 갱신됩니다. 정리 스케줄러는 하루 1회라서 `(state, cancel_date)` 없이 `(state, request_payment_date)` 하나로 충분한지 검토할 수 있습니다.
+항목별 전/후 수치, 측정 방법, 사용한 명령은 [query-tuning/README.md](query-tuning/README.md) 에 모았습니다.

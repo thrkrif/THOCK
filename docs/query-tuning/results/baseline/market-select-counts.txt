@@ -1,0 +1,4 @@
+market_http_db_select_queries_count{application="market-service",method="GET",status="200",uri="/api/v1/orders"} 925
+market_http_db_select_queries_sum{application="market-service",method="GET",status="200",uri="/api/v1/orders"} 925.0
+market_http_db_select_queries_count{application="market-service",method="GET",status="200",uri="/api/v1/shipments/me"} 41
+market_http_db_select_queries_sum{application="market-service",method="GET",status="200",uri="/api/v1/shipments/me"} 2337.0

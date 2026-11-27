@@ -1,0 +1,15 @@
+# H1-1 (after) db=thock_market_db
+select count(o1_0.id) from market_orders o1_0 where o1_0.state='CONFIRMED'
+
+## EXPLAIN
++----+-------------+-------+------------+------+---------------------------------------------------------------+----------------------------------+---------+-------+--------+----------+--------------------------+
+| id | select_type | table | partitions | type | possible_keys                                                 | key                              | key_len | ref   | rows   | filtered | Extra                    |
++----+-------------+-------+------------+------+---------------------------------------------------------------+----------------------------------+---------+-------+--------+----------+--------------------------+
+|  1 | SIMPLE      | o1_0  | NULL       | ref  | idx_orders_state_request_payment,idx_orders_state_cancel_date | idx_orders_state_request_payment | 1       | const | 512934 |   100.00 | Using where; Using index |
++----+-------------+-------+------------+------+---------------------------------------------------------------+----------------------------------+---------+-------+--------+----------+--------------------------+
+## EXPLAIN ANALYZE
+-> Aggregate: count(o1_0.id)  (cost=103713 rows=1) (actual time=308..308 rows=1 loops=1)
+    -> Filter: (o1_0.state = 'CONFIRMED')  (cost=52419 rows=512934) (actual time=0.185..278 rows=709990 loops=1)
+        -> Covering index lookup on o1_0 using idx_orders_state_request_payment (state='CONFIRMED')  (cost=52419 rows=512934) (actual time=0.18..171 rows=709990 loops=1)
+
+## median_ms=127.593  (server time, runs: 127.594 115.711 127.593 147.019 120.063 )

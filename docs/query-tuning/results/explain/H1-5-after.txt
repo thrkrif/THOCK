@@ -1,0 +1,13 @@
+# H1-5 (after) db=thock_market_db
+select o1_0.id,o1_0.buyer_id,o1_0.cancel_date,o1_0.created_at,o1_0.order_number,o1_0.state,o1_0.request_payment_date,o1_0.total_price from market_orders o1_0 where o1_0.state='CANCELLED' and o1_0.cancel_date<now()-interval 364 day
+
+## EXPLAIN
++----+-------------+-------+------------+-------+---------------------------------------------------------------+------------------------------+---------+------+------+----------+-----------------------+
+| id | select_type | table | partitions | type  | possible_keys                                                 | key                          | key_len | ref  | rows | filtered | Extra                 |
++----+-------------+-------+------------+-------+---------------------------------------------------------------+------------------------------+---------+------+------+----------+-----------------------+
+|  1 | SIMPLE      | o1_0  | NULL       | range | idx_orders_state_request_payment,idx_orders_state_cancel_date | idx_orders_state_cancel_date | 10      | NULL |    1 |   100.00 | Using index condition |
++----+-------------+-------+------------+-------+---------------------------------------------------------------+------------------------------+---------+------+------+----------+-----------------------+
+## EXPLAIN ANALYZE
+-> Index range scan on o1_0 using idx_orders_state_cancel_date over (state = 'CANCELLED' AND NULL < cancel_date < '2025-11-28 17:35:58.000000'), with index condition: ((o1_0.state = 'CANCELLED') and (o1_0.cancel_date < <cache>((now() - interval 364 day))))  (cost=1.81 rows=1) (actual time=0.0575..0.0575 rows=0 loops=1)
+
+## median_ms=0.072  (server time, runs: 0.072 0.063 0.07 0.073 0.126 )

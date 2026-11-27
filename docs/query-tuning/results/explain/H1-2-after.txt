@@ -1,0 +1,14 @@
+# H1-2 (after) db=thock_market_db
+select o1_0.state,count(o1_0.id) from market_orders o1_0 group by o1_0.state
+
+## EXPLAIN
++----+-------------+-------+------------+-------+---------------------------------------------------------------+----------------------------------+---------+------+---------+----------+-------------+
+| id | select_type | table | partitions | type  | possible_keys                                                 | key                              | key_len | ref  | rows    | filtered | Extra       |
++----+-------------+-------+------------+-------+---------------------------------------------------------------+----------------------------------+---------+------+---------+----------+-------------+
+|  1 | SIMPLE      | o1_0  | NULL       | index | idx_orders_state_request_payment,idx_orders_state_cancel_date | idx_orders_state_request_payment | 10      | NULL | 1025869 |   100.00 | Using index |
++----+-------------+-------+------------+-------+---------------------------------------------------------------+----------------------------------+---------+------+---------+----------+-------------+
+## EXPLAIN ANALYZE
+-> Group aggregate: count(o1_0.id)  (cost=218414 rows=8) (actual time=57.6..253 rows=9 loops=1)
+    -> Covering index scan on o1_0 using idx_orders_state_request_payment  (cost=115828 rows=1.03e+6) (actual time=0.119..154 rows=1.03e+6 loops=1)
+
+## median_ms=158.908  (server time, runs: 156.726 162.269 156.079 158.908 160.451 )

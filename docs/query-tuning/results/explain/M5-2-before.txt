@@ -1,0 +1,15 @@
+# M5-2 (before) db=thock_market_db
+select count(*) from outbox_event oe1_0 where oe1_0.status='SENT' and oe1_0.sent_at<now()-interval 7 day
+
+## EXPLAIN
++----+-------------+-------+------------+------+---------------------------+---------------------------+---------+-------+--------+----------+------------------------------------+
+| id | select_type | table | partitions | type | possible_keys             | key                       | key_len | ref   | rows   | filtered | Extra                              |
++----+-------------+-------+------------+------+---------------------------+---------------------------+---------+-------+--------+----------+------------------------------------+
+|  1 | SIMPLE      | oe1_0 | NULL       | ref  | idx_outbox_status_created | idx_outbox_status_created | 1       | const | 249468 |    33.33 | Using index condition; Using where |
++----+-------------+-------+------------+------+---------------------------+---------------------------+---------+-------+--------+----------+------------------------------------+
+## EXPLAIN ANALYZE
+-> Aggregate: count(0)  (cost=41047 rows=1) (actual time=4337..4337 rows=1 loops=1)
+    -> Filter: (oe1_0.sent_at < <cache>((now() - interval 7 day)))  (cost=32732 rows=83148) (actual time=2.35..4333 rows=80668 loops=1)
+        -> Index lookup on oe1_0 using idx_outbox_status_created (status='SENT'), with index condition: (oe1_0.`status` = 'SENT')  (cost=32732 rows=249468) (actual time=2.32..4305 rows=514483 loops=1)
+
+## median_ms=2261.415  (server time, runs: 2848.394 2260.439 2346.762 2261.415 2199.97 )

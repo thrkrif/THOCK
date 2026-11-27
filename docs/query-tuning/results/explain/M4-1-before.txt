@@ -1,0 +1,15 @@
+# M4-1 (before) db=thock_market_db
+select s1_0.id,s1_0.order_item_id,s1_0.seller_id,s1_0.status,s1_0.created_at from market_shipments s1_0 where s1_0.seller_id=100 order by s1_0.created_at desc
+
+## EXPLAIN
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+-----------------------------+
+| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows   | filtered | Extra                       |
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+-----------------------------+
+|  1 | SIMPLE      | s1_0  | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 933759 |     0.33 | Using where; Using filesort |
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+-----------------------------+
+## EXPLAIN ANALYZE
+-> Sort: s1_0.created_at DESC  (cost=100585 rows=933759) (actual time=372..372 rows=2758 loops=1)
+    -> Filter: (s1_0.seller_id = 100)  (cost=100585 rows=933759) (actual time=4.02..370 rows=2758 loops=1)
+        -> Table scan on s1_0  (cost=100585 rows=933759) (actual time=2.49..330 rows=941281 loops=1)
+
+## median_ms=298.495  (server time, runs: 214.567 242.132 443.21 298.495 345.629 )
