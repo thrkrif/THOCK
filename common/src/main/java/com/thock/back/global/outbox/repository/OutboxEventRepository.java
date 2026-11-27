@@ -42,12 +42,8 @@ public interface OutboxEventRepository extends JpaRepository<OutboxEvent, Long> 
      * Outbox는 계속 쌓이면 테이블이 무한 증가함
      * 주기적으로 삭제해주는 작업
      */
-    // [M5] createdAt 조건을 함께 건다. 발행은 항상 생성 이후라(createdAt <= sentAt)
-    // sentAt < before 이면 createdAt < before 도 참 → 삭제 대상은 그대로이고,
-    // idx_outbox_status_created(status, created_at)를 범위 스캔할 수 있게 된다.
-    // (sentAt 만 있으면 status='SENT' 행 전체를 읽은 뒤 sent_at 으로 거른다)
     @Modifying
-    @Query("DELETE FROM OutboxEvent o WHERE o.status = 'SENT' AND o.createdAt < :before AND o.sentAt < :before")
+    @Query("DELETE FROM OutboxEvent o WHERE o.status = 'SENT' AND o.sentAt < :before")
     int deleteSentEventsBefore(@Param("before") LocalDateTime before);
 
     /**
