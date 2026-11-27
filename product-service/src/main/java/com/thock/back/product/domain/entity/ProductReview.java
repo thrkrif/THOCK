@@ -1,6 +1,7 @@
 package com.thock.back.product.domain.entity;
 
 import com.thock.back.global.jpa.entity.BaseIdAndTime;
+import jakarta.persistence.Index;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -11,7 +12,11 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "product_reviews")
+@Table(name = "product_reviews",
+        indexes = {
+                @Index(name = "idx_product_reviews_product_created", columnList = "product_id, created_at, id"),  // V4
+                @Index(name = "idx_product_reviews_product_rating", columnList = "product_id, rating")            // 리뷰 요약 커버링 (V8)
+        })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductReview extends BaseIdAndTime {
