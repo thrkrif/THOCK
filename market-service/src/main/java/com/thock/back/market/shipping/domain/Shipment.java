@@ -4,6 +4,7 @@ import com.thock.back.global.exception.CustomException;
 import com.thock.back.global.exception.ErrorCode;
 import com.thock.back.global.jpa.entity.BaseIdAndTime;
 import com.thock.back.market.domain.OrderItem;
+import jakarta.persistence.Index;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,7 +20,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "market_shipments")
+@Table(name = "market_shipments",
+        indexes = @Index(name = "idx_shipments_seller_created", columnList = "seller_id, created_at"))  // 판매자 배송 목록 (V6)
 @Getter
 @NoArgsConstructor
 public class Shipment extends BaseIdAndTime {
