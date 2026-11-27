@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
  * - 404-x: Not Found (리소스 없음)
  * - 409-x: Conflict (리소스 충돌)
  * - 500-x: Internal Server Error (서버 오류)
+ * - 503-x: Service Unavailable (서버 과부하, 유지보수 중이라 일시적으로 요청 처리 불가)
  */
 @Getter
 public enum ErrorCode {
@@ -138,7 +139,7 @@ public enum ErrorCode {
 
     // ===== 외부 서비스 =====
     SERVICE_UNAVAILABLE("GLOBAL-503-1", "외부 서비스가 일시적으로 사용 불가합니다.", HttpStatus.SERVICE_UNAVAILABLE),
-
+    SERVER_RESOURCE_EXHAUSTED("GLOBAL-503-2", "일시적으로 서버 자원이 부족합니다. 잠시 후 다시 시도해주세요.", HttpStatus.SERVICE_UNAVAILABLE),
     ;
 
     private final String code;

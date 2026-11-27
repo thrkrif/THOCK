@@ -2,6 +2,7 @@ package com.thock.back.market.app;
 
 import com.thock.back.global.exception.CustomException;
 import com.thock.back.global.exception.ErrorCode;
+import com.thock.back.market.config.OrderCreationConnectionDebugMarker;
 import com.thock.back.market.domain.*;
 import com.thock.back.market.coupon.app.CouponService;
 import com.thock.back.market.in.dto.req.OrderCreateRequest;
@@ -57,41 +58,48 @@ public class MarketCreateOrderUseCase {
     // Facade에서 호출하는 실제 생성 로직
     @Transactional
     public OrderCreateResponse createOrder(Long memberId, OrderCreateRequest request, String idempotencyKey) {
-        // 생성 진입점에서는 멱등성 키 필수 검증 (없으면 예외)
-        String normalizedIdempotencyKey = validateAndNormalizeIdempotencyKey(idempotencyKey);
+        // TODO(debug): LazyConnectionDataSourceProxy 실제 커넥션 획득 시점 확인용 임시 마킹. 확인 끝나면 제거.
+        //  마킹 구간 안에서 실제로 DataSource#getConnection()이 호출되는 시점에만 [CONN-DEBUG] 로그가 찍힌다.
+        OrderCreationConnectionDebugMarker.mark();
+        try {
+            // 생성 진입점에서는 멱등성 키 필수 검증 (없으면 예외)
+            String normalizedIdempotencyKey = validateAndNormalizeIdempotencyKey(idempotencyKey);
 
-        MarketMember buyer = getBuyerForUpdate(memberId);
-        validateNoPendingOrder(memberId);
+            MarketMember buyer = getBuyerForUpdate(memberId);
+            validateNoPendingOrder(memberId);
 
-        Cart cart = getCartByBuyer(buyer);
-        List<CartItem> selectedCartItems = getSelectedCartItems(cart, request.cartItemIds());
-        Map<Long, ProductInfo> productMap = getProductMap(selectedCartItems);
+            Cart cart = getCartByBuyer(buyer);
+            List<CartItem> selectedCartItems = getSelectedCartItems(cart, request.cartItemIds());
+            Map<Long, ProductInfo> productMap = getProductMap(selectedCartItems);
 
-        Order order = createOrderAggregate(buyer, request, normalizedIdempotencyKey);
-        appendOrderItems(order, selectedCartItems, productMap);
+            Order order = createOrderAggregate(buyer, request, normalizedIdempotencyKey);
+            appendOrderItems(order, selectedCartItems, productMap);
 
-        Order savedOrder = orderRepository.saveAndFlush(order);
+            Order savedOrder = orderRepository.saveAndFlush(order);
 
-        if (request.couponId() != null) {
-            long discount = couponService.apply(
-                    buyer.getId(), request.couponId(), savedOrder.getTotalSalePrice(), savedOrder.getOrderNumber());
-            savedOrder.applyCoupon(request.couponId(), discount);
+            if (request.couponId() != null) {
+                long discount = couponService.apply(
+                        buyer.getId(), request.couponId(), savedOrder.getTotalSalePrice(), savedOrder.getOrderNumber());
+                savedOrder.applyCoupon(request.couponId(), discount);
+            }
+
+            WalletInfo wallet = marketSupport.getWallet(buyer.getId());
+            Long balance = wallet.getBalance();
+            Long pgAmount = Math.max(0L, savedOrder.getTotalSalePrice() - balance);
+
+            savedOrder.requestPayment(balance);
+
+            log.info("✅ 주문 생성 완료: orderId={}, orderNumber={}, buyerId={}, totalAmount={}, itemCount={}",
+                    savedOrder.getId(),
+                    savedOrder.getOrderNumber(),
+                    buyer.getId(),
+                    savedOrder.getTotalSalePrice(),
+                    savedOrder.getItems().size());
+
+            return OrderCreateResponse.from(savedOrder, pgAmount);
+        } finally {
+            OrderCreationConnectionDebugMarker.clear();
         }
-
-        WalletInfo wallet = marketSupport.getWallet(buyer.getId());
-        Long balance = wallet.getBalance();
-        Long pgAmount = Math.max(0L, savedOrder.getTotalSalePrice() - balance);
-
-        savedOrder.requestPayment(balance);
-
-        log.info("✅ 주문 생성 완료: orderId={}, orderNumber={}, buyerId={}, totalAmount={}, itemCount={}",
-                savedOrder.getId(),
-                savedOrder.getOrderNumber(),
-                buyer.getId(),
-                savedOrder.getTotalSalePrice(),
-                savedOrder.getItems().size());
-
-        return OrderCreateResponse.from(savedOrder, pgAmount);
     }
 
     // 단순 정규화 (null 반환 허용 - 조회용)
