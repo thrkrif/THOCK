@@ -127,9 +127,12 @@ public class MarketMetricsCollector {
         orderTotal.set(totalOrders);
 
         Map<OutboxStatus, Long> counts = new EnumMap<>(OutboxStatus.class);
+        for (OutboxEventRepository.OutboxStatusCount row : outboxEventRepository.countGroupByStatus()) {
+            counts.put(row.getStatus(), row.getCount());
+        }
         long totalOutbox = 0;
         for (OutboxStatus status : OutboxStatus.values()) {
-            long count = outboxEventRepository.countByStatus(status);
+            long count = counts.getOrDefault(status, 0L);
             counts.put(status, count);
             outboxStatusCount.get(status).set(count);
             totalOutbox += count;
